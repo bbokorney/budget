@@ -10,6 +10,7 @@
 
 # production
 /build
+/bin
 
 # misc
 .DS_Store
@@ -17,7 +18,12 @@
 .env.development.local
 .env.test.local
 .env.production.local
+/.creds
 
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+.firebase/
+.idea/
+ui-debug.log
