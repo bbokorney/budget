@@ -27,10 +27,10 @@ const Login = () => {
             color: "primary.main",
           }}
         >
-          Fitness
+          Budget
         </Typography>
         <Typography>
-          Sign in and get moving!
+          Sign in
         </Typography>
         <Button onClick={onLoginClick} variant="contained">Sign in with Google</Button>
       </>
