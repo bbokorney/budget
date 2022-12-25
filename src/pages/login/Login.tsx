@@ -30,7 +30,7 @@ const Login = () => {
           Budget
         </Typography>
         <Typography>
-          Sign in
+          Sign in and start saving!
         </Typography>
         <Button onClick={onLoginClick} variant="contained">Sign in with Google</Button>
       </>
