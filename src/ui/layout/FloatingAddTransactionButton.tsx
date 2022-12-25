@@ -23,7 +23,7 @@ const FloatingAddTransactionButton = () => {
         flexGrow: 1,
       }}
     >
-      <Add sx={{ color: "primary.light" }} />
+      <Add />
     </Fab>
   );
 };
