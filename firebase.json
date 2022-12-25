@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "budget-apps-2a1d8",
+    "site": "budget-9ac7f",
     "public": "build",
     "ignore": [
       "firebase.json",

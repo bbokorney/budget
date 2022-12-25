@@ -5,11 +5,13 @@ import { User } from "./user";
 export interface AuthState {
   user: User | null
   status: "initialized" | "loading";
+  error: string;
 }
 
 const initialState: AuthState = {
   user: null,
   status: "loading",
+  error: "",
 };
 
 export const authSlice = createSlice({
@@ -20,10 +22,13 @@ export const authSlice = createSlice({
       state.user = action.payload;
       state.status = "initialized";
     },
+    updateError: (state, action: PayloadAction<string>) => {
+      state.error = action.payload;
+    },
   },
 });
 
-export const { updateUser } = authSlice.actions;
+export const { updateUser, updateError } = authSlice.actions;
 
 export const selectAuth = (state: RootState) => state.auth;
 

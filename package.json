@@ -17,7 +17,7 @@
     "@types/node": "^17.0.45",
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.10",
-    "firebase": "^9.6.10",
+    "firebase": "9.6.10",
     "react": "^18.2.0",
     "react-router-dom": "^6.3.0",
     "react-dom": "^18.2.0",
@@ -31,7 +31,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "npm version patch && npm run build && firebase deploy --only hosting:budget-apps-2a1d8"
+    "deploy": "npm version patch && npm run build && firebase deploy --only hosting:budget-9ac7f"
   },
   "eslintConfig": {
     "extends": [

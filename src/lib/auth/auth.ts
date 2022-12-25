@@ -5,7 +5,7 @@ import {
   signOut,
   GoogleAuthProvider,
 } from "firebase/auth";
-import { updateUser } from "./authSlice";
+import { updateUser, updateError } from "./authSlice";
 import { store } from "../store/store";
 
 const { dispatch } = store;
@@ -23,13 +23,12 @@ onAuthStateChanged(auth, (user) => {
 });
 
 export const signUserIn = () => {
-  signInWithRedirect(auth, provider);
+  signInWithRedirect(auth, provider)
+    .catch((error) => dispatch(updateError(JSON.stringify(error))));
 };
 
 export const signUserOut = () => {
   signOut(auth)
     .then(() => window.location.reload())
-    .catch((error) => {
-      console.log("Sign-out error:", error);
-    });
+    .catch((error) => dispatch(updateError(JSON.stringify(error))));
 };

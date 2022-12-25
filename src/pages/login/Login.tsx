@@ -8,7 +8,7 @@ import { selectAuth } from "../../lib/auth/authSlice";
 import { signUserIn } from "../../lib/auth/auth";
 
 const Login = () => {
-  const { status } = useAppSelector(selectAuth);
+  const { status, error } = useAppSelector(selectAuth);
   const initialized = status === "initialized";
 
   const onLoginClick = () => {
@@ -18,7 +18,7 @@ const Login = () => {
   let elem;
   if (initialized) {
     elem = (
-      <>
+      <Container>
         <Typography
           variant="h4"
           sx={{
@@ -32,8 +32,11 @@ const Login = () => {
         <Typography>
           Sign in and start saving!
         </Typography>
+        <Typography>
+          {error && `Error logging in: ${error}`}
+        </Typography>
         <Button onClick={onLoginClick} variant="contained">Sign in with Google</Button>
-      </>
+      </Container>
     );
   } else {
     elem = (
