@@ -8,3 +8,8 @@ export interface Transaction {
   tags?: string[];
   source?: string;
 }
+
+export interface Category {
+  id?: string;
+  name?: string;
+}

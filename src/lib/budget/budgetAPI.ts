@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { Transaction } from "./models";
+import type { Transaction, Category } from "./models";
 import BudgetFirebaseAPI from "./budgetFirebaseAPI";
 
 const api = new BudgetFirebaseAPI();
@@ -13,7 +13,13 @@ export const budgetApi = createApi({
         return { data: await api.listTransactions(after) };
       },
     }),
+
+    listCategories: builder.query<Category[], void>({
+      async queryFn() {
+        return { data: await api.listCategories() };
+      },
+    }),
   }),
 });
 
-export const { useListTransactionsQuery } = budgetApi;
+export const { useListTransactionsQuery, useListCategoriesQuery } = budgetApi;
