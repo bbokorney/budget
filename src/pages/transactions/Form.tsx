@@ -13,7 +13,7 @@ import {
   selectTransactionForm, clearTransactionFormState, updateTransactionFormState,
 } from "../../lib/form/transactionFormSlice";
 import { Transaction } from "../../lib/budget/models";
-import { useListCategoriesQuery } from "../../lib/budget/budgetAPI";
+import { useListCategoriesQuery, useUpsertTransactionMutation } from "../../lib/budget/budgetAPI";
 
 type TransactionFormProps = {
   onClose?: () => void;
@@ -100,8 +100,14 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     onClose();
   };
 
+  const [
+    upsertTransaction,
+    { isLoading: isUpserting },
+  ] = useUpsertTransactionMutation();
   const onClickSave = async () => {
-    console.log("Save transaction");
+    upsertTransaction(transaction);
+    dispatch(clearFormDialogState());
+    dispatch(clearTransactionFormState());
   };
 
   const updateTransaction = (t: Transaction) => {
@@ -124,7 +130,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       onSave={onClickSave}
       saveButtonDisabled={!saveButtonEnabled}
     >
-      {isCategoriesLoading ? <CircularProgress color="secondary" />
+      {(isCategoriesLoading || isUpserting) ? <CircularProgress color="secondary" />
         : (
           <Stack sx={{ mt: 1 }}>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
