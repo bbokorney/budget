@@ -3,6 +3,7 @@ import {
 } from "@mui/material";
 import { Cached as CachedIcon } from "@mui/icons-material";
 import { useListTransactionsQuery } from "../../lib/budget/budgetAPI";
+import { formatCurrency } from "../../lib/currency/format";
 
 const TransactionsList = () => {
   const { data, isFetching: isLoading, refetch } = useListTransactionsQuery(undefined);
@@ -25,7 +26,7 @@ const TransactionsList = () => {
           <Stack key={t.id} direction="column" spacing={0.75}>
             <Stack direction="row" spacing={1}>
               <Typography>{formatDate(t.date)}</Typography>
-              <Typography sx={{ fontWeight: "bold" }}>{`$${t.amount?.toFixed(2)}`}</Typography>
+              <Typography sx={{ fontWeight: "bold" }}>{formatCurrency(t.amount ?? 0)}</Typography>
             </Stack>
             <Stack direction="row" spacing={1} divider={<Divider orientation="vertical" flexItem />}>
               <Typography>{t.category}</Typography>

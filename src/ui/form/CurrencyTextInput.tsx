@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { TextField } from "@mui/material";
+import { formatWholeNumbers } from "../../lib/currency/format";
 
 export type CurrencyTextInputProps = {
   label?: string;
@@ -13,19 +14,6 @@ const CurrencyTextInput: React.FC<CurrencyTextInputProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   onChange: onChangeCallback = (_: number) => {},
 }) => {
-  const formatWholeNumbers = (wholeNumbers: string): string => {
-    let wholeNumbersFormatted = "";
-    Array(wholeNumbers.length).fill(0).forEach((_, index) => {
-      const shouldAddComma = index !== wholeNumbers.length - 1
-          && (wholeNumbers.length - index) % 3 === 1;
-      wholeNumbersFormatted += wholeNumbers.charAt(index);
-      if (shouldAddComma) {
-        wholeNumbersFormatted += ",";
-      }
-    });
-    return wholeNumbersFormatted;
-  };
-
   const validDigitKeys = Array(10).fill(0).map((_, index) => index.toString());
   const [value, setValue] = useState(initialValue ? initialValue.toFixed(2) : "");
   const [error, setError] = useState("");
