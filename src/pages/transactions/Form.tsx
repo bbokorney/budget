@@ -148,7 +148,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               <TextField
                 error={amountError !== ""}
-                inputProps={{ inputMode: "numeric" }}
+                inputProps={{ inputMode: "decimal" }}
                 label="Amount"
                 variant="outlined"
                 value={amount !== "" ? `$ ${amount}` : ""}
