@@ -5,7 +5,7 @@ import { Cached as CachedIcon } from "@mui/icons-material";
 import { useListTransactionsQuery } from "../../lib/budget/budgetAPI";
 
 const TransactionsList = () => {
-  const { data, isLoading } = useListTransactionsQuery(undefined);
+  const { data, isFetching: isLoading, refetch } = useListTransactionsQuery(undefined);
   return (
     <>
       <Stack direction="row" sx={{ mt: 1 }} spacing={1} justifyContent="space-between">
@@ -13,7 +13,7 @@ const TransactionsList = () => {
           Transactions
         </Typography>
         <Button
-          onClick={() => console.log("load")}
+          onClick={() => refetch()}
           variant="contained"
           color="secondary"
         ><CachedIcon />
