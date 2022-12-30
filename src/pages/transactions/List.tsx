@@ -15,7 +15,7 @@ const TransactionsList = () => {
         <Button
           onClick={() => console.log("load")}
           variant="contained"
-          sx={{ backgroundColor: "secondary.main" }}
+          color="secondary"
         ><CachedIcon />
         </Button>
       </Stack>
@@ -25,7 +25,7 @@ const TransactionsList = () => {
           <Stack key={t.id} direction="column" spacing={0.75}>
             <Stack direction="row" spacing={1}>
               <Typography>{formatDate(t.date)}</Typography>
-              <Typography sx={{ fontWeight: "bold" }}>{`$${t.amount}`}</Typography>
+              <Typography sx={{ fontWeight: "bold" }}>{`$${t.amount?.toFixed(2)}`}</Typography>
             </Stack>
             <Stack direction="row" spacing={1} divider={<Divider orientation="vertical" flexItem />}>
               <Typography>{t.category}</Typography>

@@ -85,6 +85,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     setAmount(newAmount);
   };
 
+  const onAmountBlur = () => {
+    setAmount(parseFloat(amount.replaceAll(",", "")).toFixed(2));
+  };
+
   const [category, setCategory] = useState(transaction.category ?? "");
   const onCategoryInputChange = (event: SelectChangeEvent) => {
     const field = event.target.value;
@@ -174,6 +178,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                 helperText={amountError}
                 placeholder="$ 0.00"
                 onKeyUp={onAmountKeyUp}
+                onBlur={onAmountBlur}
               />
             </FormControl>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
