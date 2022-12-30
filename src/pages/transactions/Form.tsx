@@ -50,7 +50,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         newAmount += e.key;
       }
     }
-    const parsed = parseFloat(newAmount.replaceAll(",", ""));
+    newAmount = newAmount.replaceAll(",", "");
+    const parsed = parseFloat(newAmount);
     if (Number.isNaN(parsed)) {
       setAmountError("Amount must be a positive number");
     } else {
@@ -59,7 +60,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         return;
       }
 
-      const wholeNumbers = parsed.toFixed(0);
+      const wholeNumbers = newAmount.split(".")[0];
       let wholeNumbersFormatted = "";
       Array(wholeNumbers.length).fill(0).forEach((_, index) => {
         const shouldAddComma = index !== wholeNumbers.length - 1
