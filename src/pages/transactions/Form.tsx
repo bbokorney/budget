@@ -36,6 +36,19 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     }
   };
 
+  const formatWholeNumbers = (wholeNumbers: string): string => {
+    let wholeNumbersFormatted = "";
+    Array(wholeNumbers.length).fill(0).forEach((_, index) => {
+      const shouldAddComma = index !== wholeNumbers.length - 1
+          && (wholeNumbers.length - index) % 3 === 1;
+      wholeNumbersFormatted += wholeNumbers.charAt(index);
+      if (shouldAddComma) {
+        wholeNumbersFormatted += ",";
+      }
+    });
+    return wholeNumbersFormatted;
+  };
+
   const validDigitKeys = Array(10).fill(0).map((_, index) => index.toString());
   const [amount, setAmount] = useState(transaction.amount ? transaction.amount.toFixed(2) : "");
   const [amountError, setAmountError] = useState("");
@@ -61,15 +74,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       }
 
       const wholeNumbers = newAmount.split(".")[0];
-      let wholeNumbersFormatted = "";
-      Array(wholeNumbers.length).fill(0).forEach((_, index) => {
-        const shouldAddComma = index !== wholeNumbers.length - 1
-          && (wholeNumbers.length - index) % 3 === 1;
-        wholeNumbersFormatted += wholeNumbers.charAt(index);
-        if (shouldAddComma) {
-          wholeNumbersFormatted += ",";
-        }
-      });
+      const wholeNumbersFormatted = formatWholeNumbers(wholeNumbers);
 
       let suffix = "";
       const tokens = newAmount.split(".");
@@ -86,7 +91,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   };
 
   const onAmountBlur = () => {
-    setAmount(parseFloat(amount.replaceAll(",", "")).toFixed(2));
+    const newAmount = amount.replaceAll(",", "");
+    const tokens = newAmount.split(".");
+    setAmount(`${formatWholeNumbers(tokens[0])
+    }.${parseFloat(newAmount).toFixed(2).split(".")[1]}`);
   };
 
   const [category, setCategory] = useState(transaction.category ?? "");
