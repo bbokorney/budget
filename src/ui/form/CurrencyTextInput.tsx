@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField } from "@mui/material";
+import { TextField, InputAdornment } from "@mui/material";
 import { formatWholeNumbers } from "../../lib/currency/format";
 
 export type CurrencyTextInputProps = {
@@ -69,11 +69,14 @@ const CurrencyTextInput: React.FC<CurrencyTextInputProps> = ({
     <TextField
       label={label}
       error={error !== ""}
-      inputProps={{ inputMode: "decimal" }}
+      InputProps={{
+        inputMode: "decimal",
+        startAdornment: <InputAdornment position="start">$</InputAdornment>,
+      }}
       variant="outlined"
-      value={value !== "" ? `$ ${value}` : ""}
+      value={value}
       helperText={error}
-      placeholder="$ 0.00"
+      placeholder="0.00"
       onKeyUp={onKeyUp}
       onBlur={onBlur}
     />
