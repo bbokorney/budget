@@ -1,15 +1,58 @@
+import React, { useEffect } from "react";
 import {
   Typography, Stack, CircularProgress, Button, Divider,
 } from "@mui/material";
 import { Cached as CachedIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useListTransactionsQuery } from "../../lib/budget/budgetAPI";
+import { useAppSelector, useAppDispatch } from "../../lib/store/hooks";
+import {
+  useListTransactionsQuery,
+} from "../../lib/budget/budgetAPI";
 import { formatCurrency } from "../../lib/currency/format";
 import formatDate from "../../lib/dates/format";
+import {
+  selectListTransactionsPagination,
+  updateListTransactionsPaginationState,
+} from "../../lib/budget/paginationSlice";
 
 const TransactionsList = () => {
-  const { data, isFetching: isLoading, refetch } = useListTransactionsQuery(undefined);
+  const dispatch = useAppDispatch();
+  const { lastTransaction } = useAppSelector(selectListTransactionsPagination);
+  const {
+    data: transactions, isFetching: isLoading, refetch: refetchTransactions,
+  } = useListTransactionsQuery(lastTransaction);
+
   const navigate = useNavigate();
+
+  const bottomRef = React.createRef<Element>();
+
+  useEffect(() => {
+    if (!bottomRef.current) {
+      return () => {};
+    }
+
+    const ref = bottomRef.current;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && transactions && !isLoading) {
+            dispatch(
+              updateListTransactionsPaginationState(
+                { lastTransaction: transactions[transactions.length - 1] },
+              ),
+            );
+          }
+        });
+      },
+    );
+
+    observer.observe(ref);
+
+    return () => {
+      observer.unobserve(ref);
+    };
+  }, [transactions]);
+
   return (
     <>
       <Stack direction="row" sx={{ mt: 1 }} spacing={1} justifyContent="space-between">
@@ -17,7 +60,9 @@ const TransactionsList = () => {
           Transactions
         </Typography>
         <Button
-          onClick={() => refetch()}
+          onClick={() => {
+            refetchTransactions();
+          }}
           variant="contained"
           color="secondary"
         ><CachedIcon />
@@ -25,7 +70,7 @@ const TransactionsList = () => {
       </Stack>
 
       <Stack direction="column" sx={{ mt: 1, mb: 2 }} spacing={2} divider={<Divider />}>
-        {data && data.map((t) => (
+        {transactions && transactions.map((t) => (
           <Stack
             key={t.id}
             direction="column"
@@ -47,6 +92,8 @@ const TransactionsList = () => {
       <Stack direction="row" sx={{ mt: 1 }} spacing={1} justifyContent="space-around">
         {isLoading && <CircularProgress color="secondary" />}
       </Stack>
+
+      <Stack ref={bottomRef} />
     </>
   );
 };

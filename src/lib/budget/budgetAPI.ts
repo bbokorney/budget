@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { Transaction, Category } from "./models";
 import BudgetFirebaseAPI from "./budgetFirebaseAPI";
+import { clearListTransactionsPaginationState } from "./paginationSlice";
 
 const api = new BudgetFirebaseAPI();
 
@@ -9,9 +10,23 @@ export const budgetApi = createApi({
   baseQuery: fetchBaseQuery({}),
   tagTypes: ["Transactions", "Categories"],
   endpoints: (builder) => ({
-    listTransactions: builder.query<Transaction[], string | undefined>({
-      async queryFn(after) {
+    listTransactions: builder.query<Transaction[], Transaction | undefined>({
+      async queryFn(after, queryApi) {
+        if (queryApi.forced || after === undefined) {
+          after = undefined;
+          queryApi.dispatch(clearListTransactionsPaginationState());
+          queryApi.dispatch(budgetApi.util.updateQueryData("listTransactions", undefined, (draft) => {
+            draft.splice(0, draft.length);
+          }));
+        }
         return { data: await api.listTransactions(after) };
+      },
+      serializeQueryArgs: ({ endpointName }) => endpointName,
+      merge: (currentCache, newItems) => {
+        currentCache.push(...newItems);
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
       },
       providesTags: ["Transactions"],
     }),

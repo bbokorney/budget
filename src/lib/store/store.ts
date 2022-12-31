@@ -4,11 +4,13 @@ import { budgetApi } from "../budget/budgetAPI";
 import authReducer from "../auth/authSlice";
 import formDialogReducer from "../formDialog/formDialogSlice";
 import transactionFormReducer from "../form/transactionFormSlice";
+import listTransactionsPaginationReducer from "../budget/paginationSlice";
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     formDialog: formDialogReducer,
+    listTransactionsPagination: listTransactionsPaginationReducer,
     transactionForm: transactionFormReducer,
     [budgetApi.reducerPath]: budgetApi.reducer,
   },

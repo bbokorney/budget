@@ -22,13 +22,13 @@ export default class BudgetFirebaseAPI {
     return doc(this.db, this.transactionsCollectionName, t.id);
   };
 
-  listTransactions = async (after?: string): Promise<Transaction[]> => {
+  listTransactions = async (after?: Transaction): Promise<Transaction[]> => {
     const transactionsRef = collection(this.db, this.transactionsCollectionName);
     const constraints: QueryConstraint[] = [orderBy("date", "desc")];
-    if (after) {
-      constraints.push(where("date", "<", after));
+    if (after?.date) {
+      constraints.push(where("date", "<", after.date));
     }
-    constraints.push(limit(10));
+    constraints.push(limit(25));
     const q = query(transactionsRef, ...constraints);
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs
