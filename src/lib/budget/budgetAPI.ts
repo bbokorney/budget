@@ -30,7 +30,7 @@ export const budgetApi = createApi({
       providesTags: ["Transactions"],
     }),
 
-    deleteTransaction: builder.mutation<void, Transaction>({
+    deleteTransaction: builder.mutation<Transaction, Transaction>({
       async queryFn(t) {
         return { data: await api.deleteTransaction(t) };
       },
@@ -51,4 +51,5 @@ export const {
   useUpsertTransactionMutation,
   useGetTransactionQuery,
   useListCategoriesQuery,
+  useDeleteTransactionMutation,
 } = budgetApi;

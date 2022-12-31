@@ -7,7 +7,6 @@ import { useListTransactionsQuery } from "../../lib/budget/budgetAPI";
 import { formatCurrency } from "../../lib/currency/format";
 import formatDate from "../../lib/dates/format";
 
-
 const TransactionsList = () => {
   const { data, isFetching: isLoading, refetch } = useListTransactionsQuery(undefined);
   const navigate = useNavigate();

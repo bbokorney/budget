@@ -56,7 +56,10 @@ export default class BudgetFirebaseAPI {
     };
   };
 
-  deleteTransaction = async (t: Transaction): Promise<void> => deleteDoc(this.docReference(t));
+  deleteTransaction = async (t: Transaction): Promise<Transaction> => {
+    await deleteDoc(this.docReference(t));
+    return t;
+  };
 
   listCategories = async (): Promise<Category[]> => {
     const collectionRef = collection(this.db, this.categoriesCollectionName);

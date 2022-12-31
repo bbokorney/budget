@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
-  Button, Stack, Typography, CircularProgress, Divider,
+  Button, Stack, Typography, CircularProgress, Divider, Backdrop,
   Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
 } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+import { Delete, Edit, Check } from "@mui/icons-material";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../lib/store/hooks";
-import { useGetTransactionQuery } from "../../lib/budget/budgetAPI";
+import { useGetTransactionQuery, useDeleteTransactionMutation } from "../../lib/budget/budgetAPI";
 import formatDate from "../../lib/dates/format";
 import { formatCurrency } from "../../lib/currency/format";
 import { updateFormDialogState } from "../../lib/formDialog/formDialogSlice";
@@ -19,7 +19,19 @@ const ViewTransaction = () => {
   }
 
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const { data, isLoading } = useGetTransactionQuery(id);
+  let transaction = data;
+  const [
+    deleteTransaction,
+    {
+      isLoading: isDeleting, isSuccess: isDeleteSuccess, reset, data: deletedData,
+    },
+  ] = useDeleteTransactionMutation();
+  if (isDeleteSuccess) {
+    transaction = deletedData;
+  }
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const handleDialogClose = () => {
@@ -27,21 +39,46 @@ const ViewTransaction = () => {
   };
   const handleDelete = async () => {
     handleDialogClose();
+    deleteTransaction(data ?? {});
   };
 
+  useEffect(() => {
+    if (isDeleteSuccess) {
+      setTimeout(() => {
+        navigate("/transactions/list");
+        reset();
+      }, 1000);
+    }
+  }, [isDeleteSuccess]);
+
   const onClickEdit = () => {
-    if (data) {
-      dispatch(updateTransactionFormState({ transaction: data }));
+    if (transaction) {
+      dispatch(updateTransactionFormState({ transaction }));
       dispatch(updateFormDialogState({ open: true, actionType: "Update" }));
     }
   };
 
+  const backdropOpen = isLoading || isDeleting || isDeleteSuccess;
+  let message = "";
+  if (isDeleteSuccess) {
+    message = "Transaction deleted";
+  }
+  if (isDeleting) {
+    message = "Deleting...";
+  }
+
   return (
     <Stack direction="column" sx={{ mt: 1 }} spacing={1}>
-      <Stack direction="row" sx={{ mt: 1 }} spacing={1} justifyContent="space-around">
-        {isLoading && <CircularProgress color="secondary" />}
-      </Stack>
-      {data && (
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={backdropOpen}
+      >
+        <Stack spacing={2} alignItems="center">
+          {isDeleteSuccess ? <Check color="secondary" /> : <CircularProgress color="secondary" /> }
+          <Typography>{message}</Typography>
+        </Stack>
+      </Backdrop>
+      {transaction && (
         <>
           <Stack direction="row" sx={{ mt: 1 }} spacing={1}>
             <Typography variant="h6">
@@ -54,12 +91,16 @@ const ViewTransaction = () => {
           </Stack>
           <Stack>
             <Stack direction="row" spacing={1} divider={<Divider orientation="vertical" flexItem />}>
-              <Typography>{formatDate(data?.date)}</Typography>
-              <Typography sx={{ fontWeight: "bold" }}>{formatCurrency(data?.amount ?? 0)}</Typography>
+              <Typography>{formatDate(transaction?.date)}</Typography>
+              <Typography sx={{ fontWeight: "bold" }}>{formatCurrency(transaction?.amount ?? 0)}</Typography>
             </Stack>
-            <Typography>Category: {data?.category}</Typography>
-            <Typography>Vendor: {data?.vendor}</Typography>
-            <Typography sx={{ whiteSpace: "pre-wrap" }} component="pre">Notes: {data?.notes}</Typography>
+            <Typography>Category: {transaction?.category}</Typography>
+            <Typography>Vendor: {transaction?.vendor}</Typography>
+            <Typography
+              sx={{ whiteSpace: "pre-wrap" }}
+              component="pre"
+            >Notes: {transaction?.notes}
+            </Typography>
           </Stack>
 
           <Dialog
