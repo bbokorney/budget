@@ -53,6 +53,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         onClose();
         dispatch(clearFormDialogState());
         dispatch(clearTransactionFormState());
+        setSaveButtonEnabled(false);
         reset();
       }, 2000);
     }
@@ -72,6 +73,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
   const backdropOpen = isCategoriesLoading || isUpserting || isUpsertSuccess;
 
+  const formControlSx = { m: 1, minWidth: 120 };
+
   return (
     <FullScreenDialog
       open={open}
@@ -80,6 +83,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       onSave={onClickSave}
       saveButtonDisabled={!saveButtonEnabled}
     >
+
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={backdropOpen}
@@ -89,8 +93,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           <Typography>{isUpsertSuccess ? "Transaction saved" : "Saving..."}</Typography>
         </Stack>
       </Backdrop>
+
       <Stack sx={{ mt: 1 }}>
-        <FormControl sx={{ m: 1, minWidth: 120 }}>
+        <FormControl sx={formControlSx}>
           <FormDatePicker
             label="Date"
             initialValue={transaction.date ? new Date(transaction.date) : new Date()}
@@ -100,14 +105,14 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             })}
           />
         </FormControl>
-        <FormControl sx={{ m: 1, minWidth: 120 }}>
+        <FormControl sx={formControlSx}>
           <CurrencyTextInput
             label="Amount"
             initialValue={transaction.amount}
             onChange={(value) => updateTransaction({ ...transaction, amount: value })}
           />
         </FormControl>
-        <FormControl sx={{ m: 1, minWidth: 120 }}>
+        <FormControl sx={formControlSx}>
           <FormSelect
             label="Categories"
             initialValue={transaction.category ?? ""}
@@ -115,14 +120,14 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             onChange={(value) => updateTransaction({ ...transaction, category: value })}
           />
         </FormControl>
-        <FormControl sx={{ m: 1, minWidth: 120 }}>
+        <FormControl sx={formControlSx}>
           <FormTextField
             label="Vendor"
             initialValue={transaction.vendor ?? ""}
             onChange={(value) => updateTransaction({ ...transaction, vendor: value })}
           />
         </FormControl>
-        <FormControl sx={{ m: 1, minWidth: 120 }}>
+        <FormControl sx={formControlSx}>
           <FormTextField
             label="Notes"
             initialValue={transaction.notes ?? ""}
