@@ -7,7 +7,7 @@ const api = new BudgetFirebaseAPI();
 export const budgetApi = createApi({
   reducerPath: "budgetApi",
   baseQuery: fetchBaseQuery({}),
-  tagTypes: ["Transactions"],
+  tagTypes: ["Transactions", "Categories"],
   endpoints: (builder) => ({
     listTransactions: builder.query<Transaction[], string | undefined>({
       async queryFn(after) {
@@ -18,7 +18,21 @@ export const budgetApi = createApi({
 
     upsertTransaction: builder.mutation<Transaction, Transaction>({
       async queryFn(t) {
-        return { data: await api.upsert(t) };
+        return { data: await api.upsertTransaction(t) };
+      },
+      invalidatesTags: ["Transactions"],
+    }),
+
+    getTransaction: builder.query<Transaction, string>({
+      async queryFn(id) {
+        return { data: await api.getTransaction(id) };
+      },
+      providesTags: ["Transactions"],
+    }),
+
+    deleteTransaction: builder.mutation<void, Transaction>({
+      async queryFn(t) {
+        return { data: await api.deleteTransaction(t) };
       },
       invalidatesTags: ["Transactions"],
     }),
@@ -27,6 +41,7 @@ export const budgetApi = createApi({
       async queryFn() {
         return { data: await api.listCategories() };
       },
+      providesTags: ["Categories"],
     }),
   }),
 });
@@ -34,5 +49,6 @@ export const budgetApi = createApi({
 export const {
   useListTransactionsQuery,
   useUpsertTransactionMutation,
+  useGetTransactionQuery,
   useListCategoriesQuery,
 } = budgetApi;

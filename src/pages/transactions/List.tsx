@@ -2,11 +2,15 @@ import {
   Typography, Stack, CircularProgress, Button, Divider,
 } from "@mui/material";
 import { Cached as CachedIcon } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 import { useListTransactionsQuery } from "../../lib/budget/budgetAPI";
 import { formatCurrency } from "../../lib/currency/format";
+import formatDate from "../../lib/dates/format";
+
 
 const TransactionsList = () => {
   const { data, isFetching: isLoading, refetch } = useListTransactionsQuery(undefined);
+  const navigate = useNavigate();
   return (
     <>
       <Stack direction="row" sx={{ mt: 1 }} spacing={1} justifyContent="space-between">
@@ -23,7 +27,12 @@ const TransactionsList = () => {
 
       <Stack direction="column" sx={{ mt: 1, mb: 2 }} spacing={2} divider={<Divider />}>
         {data && data.map((t) => (
-          <Stack key={t.id} direction="column" spacing={0.75}>
+          <Stack
+            key={t.id}
+            direction="column"
+            spacing={0.75}
+            onClick={() => navigate(`/transactions/${t.id}`)}
+          >
             <Stack direction="row" spacing={1}>
               <Typography>{formatDate(t.date)}</Typography>
               <Typography sx={{ fontWeight: "bold" }}>{formatCurrency(t.amount ?? 0)}</Typography>
@@ -43,13 +52,3 @@ const TransactionsList = () => {
   );
 };
 export default TransactionsList;
-
-function formatDate(time?: number) {
-  if (!time) {
-    return "";
-  }
-  const options: Intl.DateTimeFormatOptions = {
-    year: "numeric", month: "short", day: "numeric",
-  };
-  return (new Date(time)).toLocaleString("en-US", options);
-}

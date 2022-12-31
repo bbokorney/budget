@@ -1,7 +1,7 @@
 import {
   addDoc, collection, getDocs,
   QueryDocumentSnapshot, Firestore, query, orderBy,
-  setDoc, doc, deleteDoc, limit, where, QueryConstraint,
+  setDoc, doc, deleteDoc, limit, where, QueryConstraint, getDoc,
 } from "firebase/firestore";
 import { Transaction, Category } from "./models";
 import getDB from "./firebase";
@@ -35,7 +35,7 @@ export default class BudgetFirebaseAPI {
       .map((snapshot: QueryDocumentSnapshot) => ({ id: snapshot.id, ...snapshot.data() }));
   };
 
-  upsert = async (t: Transaction): Promise<Transaction> => {
+  upsertTransaction = async (t: Transaction): Promise<Transaction> => {
     t = { ...t, source: "app" };
     if (t.id) {
       await setDoc(this.docReference(t), t);
@@ -48,7 +48,15 @@ export default class BudgetFirebaseAPI {
     };
   };
 
-  delete = async (t: Transaction): Promise<void> => deleteDoc(this.docReference(t));
+  getTransaction = async (id: string): Promise<Transaction> => {
+    const docRef = await getDoc(this.docReference({ id }));
+    return {
+      id: docRef.id,
+      ...docRef.data(),
+    };
+  };
+
+  deleteTransaction = async (t: Transaction): Promise<void> => deleteDoc(this.docReference(t));
 
   listCategories = async (): Promise<Category[]> => {
     const collectionRef = collection(this.db, this.categoriesCollectionName);
