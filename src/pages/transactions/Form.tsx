@@ -55,7 +55,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         dispatch(clearTransactionFormState());
         setSaveButtonEnabled(false);
         reset();
-      }, 2000);
+      }, 1000);
     }
   }, [isUpsertSuccess]);
 

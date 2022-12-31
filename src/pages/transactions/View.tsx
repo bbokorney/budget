@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-  Button, Stack, Typography, CircularProgress,
+  Button, Stack, Typography, CircularProgress, Divider,
   Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
@@ -53,8 +53,10 @@ const ViewTransaction = () => {
             </Stack>
           </Stack>
           <Stack>
-            <Typography>Date: {formatDate(data?.date)}</Typography>
-            <Typography>Amount: {formatCurrency(data?.amount ?? 0)}</Typography>
+            <Stack direction="row" spacing={1} divider={<Divider orientation="vertical" flexItem />}>
+              <Typography>{formatDate(data?.date)}</Typography>
+              <Typography sx={{ fontWeight: "bold" }}>{formatCurrency(data?.amount ?? 0)}</Typography>
+            </Stack>
             <Typography>Category: {data?.category}</Typography>
             <Typography>Vendor: {data?.vendor}</Typography>
             <Typography sx={{ whiteSpace: "pre-wrap" }} component="pre">Notes: {data?.notes}</Typography>
