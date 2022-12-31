@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
-  InputLabel, Select, SelectChangeEvent,
-  MenuItem,
+  Autocomplete, TextField,
 } from "@mui/material";
 
 export type FormSelectOption ={
@@ -12,35 +11,36 @@ export type FormSelectOption ={
 
 export type FormSelectProps = {
   label?: string
-  initialValue?: string
+  initialValue?: FormSelectOption | null
   // eslint-disable-next-line no-unused-vars
-  onChange?: (value: string) => void;
+  onChange?: (value: FormSelectOption | null) => void;
   options?: FormSelectOption[];
 }
 
 const FormSelect: React.FC<FormSelectProps> = ({
   label, initialValue,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-  onChange: onChangeCallback = (_: string) => {},
-  options,
+  onChange: onChangeCallback = (_: FormSelectOption | null) => {},
+  options = [],
 }) => {
-  const [value, setValue] = useState(initialValue);
-  const onChange = (event: SelectChangeEvent) => {
-    const fieldVal = event.target.value;
-    setValue(fieldVal);
-    onChangeCallback(fieldVal);
+  const [value, setValue] = useState<FormSelectOption | null>(initialValue ?? null);
+  const onChange = (_: React.SyntheticEvent, newValue: FormSelectOption | null) => {
+    setValue(newValue);
+    onChangeCallback(newValue);
   };
+
   return (
-    <>
-      <InputLabel>{label}</InputLabel>
-      <Select
-        value={value}
-        label={label}
-        onChange={onChange}
-      >
-        {options && options.map((o) => <MenuItem key={o.id} value={o.value}>{o.displayValue}</MenuItem>)}
-      </Select>
-    </>
+    <Autocomplete
+      disablePortal
+      options={options}
+      getOptionLabel={(option: FormSelectOption) => option.value}
+      isOptionEqualToValue={(option, selectedValue) => option.id === selectedValue.id}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      renderInput={(params) => <TextField {...params} label={label} />}
+      value={value}
+      onChange={onChange}
+      placeholder="Category"
+    />
   );
 };
 

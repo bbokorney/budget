@@ -32,6 +32,12 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const categoryOptions = categories?.map(
     (c) => ({ id: c.id ?? "", value: c.name ?? "", displayValue: c.name ?? "" }),
   );
+  const optionFromCategoryName = (name?: string) => {
+    if (!name) {
+      return null;
+    }
+    return categoryOptions?.find((option) => name === option?.value);
+  };
 
   const onDialogClose = () => {
     dispatch(clearFormDialogState());
@@ -114,10 +120,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         </FormControl>
         <FormControl sx={formControlSx}>
           <FormSelect
-            label="Categories"
-            initialValue={transaction.category ?? ""}
-            options={categoryOptions}
-            onChange={(value) => updateTransaction({ ...transaction, category: value })}
+            label="Category"
+            initialValue={optionFromCategoryName(transaction.category)}
+            options={categoryOptions ?? []}
+            onChange={(option) => option && updateTransaction({ ...transaction, category: option.value })}
           />
         </FormControl>
         <FormControl sx={formControlSx}>
