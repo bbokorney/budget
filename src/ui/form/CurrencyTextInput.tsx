@@ -56,6 +56,9 @@ const CurrencyTextInput: React.FC<CurrencyTextInputProps> = ({
   };
 
   const onBlur = () => {
+    if (value === undefined || value === "") {
+      return;
+    }
     const newValue = value.replaceAll(",", "");
     const tokens = newValue.split(".");
     setValue(`${formatWholeNumbers(tokens[0])
