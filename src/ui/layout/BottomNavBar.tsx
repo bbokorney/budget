@@ -6,7 +6,6 @@ import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import HomeIcon from "@mui/icons-material/Home";
 import ViewListIcon from "@mui/icons-material/ViewList";
-import BarChartIcon from "@mui/icons-material/BarChart";
 import Paper from "@mui/material/Paper";
 
 const BottomNavBar = () => {
@@ -39,13 +38,6 @@ const BottomNavBar = () => {
           icon={<ViewListIcon />}
           component={RouterLink}
           to="/transactions/list"
-        />
-        <BottomNavigationAction
-          label="Stats"
-          value="/transactions/stats"
-          icon={<BarChartIcon />}
-          component={RouterLink}
-          to="/transactions/stats"
         />
       </BottomNavigation>
     </Paper>
