@@ -69,8 +69,11 @@ const CurrencyTextInput: React.FC<CurrencyTextInputProps> = ({
     <TextField
       label={label}
       error={error !== ""}
-      InputProps={{
+      inputProps={{
         inputMode: "decimal",
+      }}
+      // eslint-disable-next-line react/jsx-no-duplicate-props
+      InputProps={{
         startAdornment: <InputAdornment position="start">$</InputAdornment>,
       }}
       variant="outlined"

@@ -74,6 +74,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       && t.category !== undefined && t.category !== ""
       && t.vendor !== undefined && t.vendor !== "") {
       setSaveButtonEnabled(true);
+    } else {
+      setSaveButtonEnabled(false);
     }
   };
 
@@ -123,7 +125,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             label="Category"
             initialValue={optionFromCategoryName(transaction.category)}
             options={categoryOptions ?? []}
-            onChange={(option) => option && updateTransaction({ ...transaction, category: option.value })}
+            onChange={(option) => {
+              updateTransaction({ ...transaction, category: option?.value ?? "" });
+            }}
           />
         </FormControl>
         <FormControl sx={formControlSx}>
