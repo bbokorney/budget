@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Stack, FormControl, CircularProgress,
+  Stack, FormControl, CircularProgress, Typography, Backdrop,
 } from "@mui/material";
+import { Check } from "@mui/icons-material";
 import { useAppSelector, useAppDispatch } from "../../lib/store/hooks";
 import { clearFormDialogState, selectFormDialog } from "../../lib/formDialog/formDialogSlice";
 import FullScreenDialog from "../../ui/dialog/FullScreen";
@@ -22,8 +23,6 @@ type TransactionFormProps = {
 const TransactionForm: React.FC<TransactionFormProps> = ({
   onClose = () => {},
 }) => {
-  // TODO
-  // show spinner while saving, don't close until saved
   const dispatch = useAppDispatch();
   const { open, actionType } = useAppSelector(selectFormDialog);
   const { transaction } = useAppSelector(selectTransactionForm);
@@ -37,18 +36,27 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const onDialogClose = () => {
     dispatch(clearFormDialogState());
     dispatch(clearTransactionFormState());
-    onClose();
   };
 
   const [
     upsertTransaction,
-    { isLoading: isUpserting },
+    { isLoading: isUpserting, isSuccess: isUpsertSuccess, reset },
   ] = useUpsertTransactionMutation();
+
   const onClickSave = async () => {
     upsertTransaction(transaction);
-    dispatch(clearFormDialogState());
-    dispatch(clearTransactionFormState());
   };
+
+  useEffect(() => {
+    if (isUpsertSuccess) {
+      setTimeout(() => {
+        onClose();
+        dispatch(clearFormDialogState());
+        dispatch(clearTransactionFormState());
+        reset();
+      }, 2000);
+    }
+  }, [isUpsertSuccess]);
 
   const updateTransaction = (t: Transaction) => {
     if (t.date === undefined || t.date === 0) {
@@ -62,6 +70,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     }
   };
 
+  const backdropOpen = isCategoriesLoading || isUpserting || isUpsertSuccess;
+
   return (
     <FullScreenDialog
       open={open}
@@ -70,52 +80,58 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       onSave={onClickSave}
       saveButtonDisabled={!saveButtonEnabled}
     >
-      {(isCategoriesLoading || isUpserting) ? <CircularProgress color="secondary" />
-        : (
-          <Stack sx={{ mt: 1 }}>
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
-              <FormDatePicker
-                label="Date"
-                initialValue={transaction.date ? new Date(transaction.date) : new Date()}
-                onChange={(date: Date | null) => date && updateTransaction({
-                  ...transaction,
-                  date: date.getTime(),
-                })}
-              />
-            </FormControl>
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
-              <CurrencyTextInput
-                label="Amount"
-                initialValue={transaction.amount}
-                onChange={(value) => updateTransaction({ ...transaction, amount: value })}
-              />
-            </FormControl>
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
-              <FormSelect
-                label="Categories"
-                initialValue={transaction.category ?? ""}
-                options={categoryOptions}
-                onChange={(value) => updateTransaction({ ...transaction, category: value })}
-              />
-            </FormControl>
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
-              <FormTextField
-                label="Vendor"
-                initialValue={transaction.vendor ?? ""}
-                onChange={(value) => updateTransaction({ ...transaction, vendor: value })}
-              />
-            </FormControl>
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
-              <FormTextField
-                label="Notes"
-                initialValue={transaction.notes ?? ""}
-                onChange={(value: string) => updateTransaction({ ...transaction, notes: value })}
-                multiline
-                maxRows={4}
-              />
-            </FormControl>
-          </Stack>
-        )}
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={backdropOpen}
+      >
+        <Stack spacing={2} alignItems="center">
+          {isUpsertSuccess ? <Check color="primary" /> : <CircularProgress /> }
+          <Typography>{isUpsertSuccess ? "Transaction saved" : "Saving..."}</Typography>
+        </Stack>
+      </Backdrop>
+      <Stack sx={{ mt: 1 }}>
+        <FormControl sx={{ m: 1, minWidth: 120 }}>
+          <FormDatePicker
+            label="Date"
+            initialValue={transaction.date ? new Date(transaction.date) : new Date()}
+            onChange={(date: Date | null) => date && updateTransaction({
+              ...transaction,
+              date: date.getTime(),
+            })}
+          />
+        </FormControl>
+        <FormControl sx={{ m: 1, minWidth: 120 }}>
+          <CurrencyTextInput
+            label="Amount"
+            initialValue={transaction.amount}
+            onChange={(value) => updateTransaction({ ...transaction, amount: value })}
+          />
+        </FormControl>
+        <FormControl sx={{ m: 1, minWidth: 120 }}>
+          <FormSelect
+            label="Categories"
+            initialValue={transaction.category ?? ""}
+            options={categoryOptions}
+            onChange={(value) => updateTransaction({ ...transaction, category: value })}
+          />
+        </FormControl>
+        <FormControl sx={{ m: 1, minWidth: 120 }}>
+          <FormTextField
+            label="Vendor"
+            initialValue={transaction.vendor ?? ""}
+            onChange={(value) => updateTransaction({ ...transaction, vendor: value })}
+          />
+        </FormControl>
+        <FormControl sx={{ m: 1, minWidth: 120 }}>
+          <FormTextField
+            label="Notes"
+            initialValue={transaction.notes ?? ""}
+            onChange={(value: string) => updateTransaction({ ...transaction, notes: value })}
+            multiline
+            maxRows={4}
+          />
+        </FormControl>
+      </Stack>
     </FullScreenDialog>
   );
 };

@@ -41,7 +41,6 @@ const FullScreenDialog: React.FC<FullScreenDialogProps> = ({
 
   const handleSave = () => {
     onSave();
-    onClose();
   };
 
   return (
