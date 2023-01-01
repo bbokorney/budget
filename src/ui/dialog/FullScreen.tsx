@@ -74,8 +74,7 @@ const FullScreenDialog: React.FC<FullScreenDialogProps> = ({
           sx={{
             width: "100%",
             position: "fixed",
-            bottom: "10px",
-            right: "10px",
+            bottom: "5%",
             transform: "translateZ(0px)",
             flexGrow: 1,
             justifyContent: "space-around",
