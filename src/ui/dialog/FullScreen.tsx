@@ -78,14 +78,17 @@ const FullScreenDialog: React.FC<FullScreenDialogProps> = ({
             </Typography>
           </Toolbar>
         </AppBar>
-        {children}
+        <Box sx={{ paddingBottom: `${pixelsFromBottom}px` }}>
+          {children}
+        </Box>
 
         <Stack
           direction="row"
           sx={{
+            background: "#fff",
+            zIndex: 2,
             width: "100%",
             position: "fixed",
-            transform: "translateZ(0px)",
             flexGrow: 1,
             justifyContent: "space-around",
             ...saveButtonPositionStyles,
