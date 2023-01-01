@@ -90,6 +90,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       onClose={onDialogClose}
       onSave={onClickSave}
       saveButtonDisabled={!saveButtonEnabled}
+      saveButtonText="Save transaction"
     >
 
       <Backdrop

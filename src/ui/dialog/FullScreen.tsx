@@ -1,6 +1,7 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Fab from "@mui/material/Fab";
 import Dialog from "@mui/material/Dialog";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -64,12 +65,31 @@ const FullScreenDialog: React.FC<FullScreenDialogProps> = ({
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
               {title}
             </Typography>
-            <Button disabled={saveButtonDisabled} autoFocus color="inherit" onClick={handleSave}>
-              {saveButtonText}
-            </Button>
           </Toolbar>
         </AppBar>
         {children}
+
+        <Stack
+          direction="row"
+          sx={{
+            width: "100%",
+            position: "fixed",
+            bottom: "10px",
+            right: "10px",
+            transform: "translateZ(0px)",
+            flexGrow: 1,
+            justifyContent: "space-around",
+          }}
+        >
+          <Fab
+            disabled={saveButtonDisabled}
+            variant="extended"
+            color="secondary"
+            onClick={handleSave}
+          >
+            {saveButtonText}
+          </Fab>
+        </Stack>
       </Dialog>
     </Box>
   );
