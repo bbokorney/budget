@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Fab from "@mui/material/Fab";
@@ -36,20 +36,31 @@ const FullScreenDialog: React.FC<FullScreenDialogProps> = ({
   onClose = () => {},
   onSave = () => {},
 }) => {
-  const handleClose = () => {
-    onClose();
+  const pixelsFromBottom = 80;
+  const calcPositionStyles = () => {
+    if (window.visualViewport) {
+      const topPixels = window.visualViewport.height - pixelsFromBottom;
+      return { top: `${topPixels}px`, bottom: 0 };
+    }
+    return { top: 0, bottom: `${pixelsFromBottom}px` };
   };
 
-  const handleSave = () => {
-    onSave();
-  };
+  const [saveButtonPositionStyles, setSaveButtonPositionStyles] = useState(calcPositionStyles);
+
+  useEffect(() => {
+    const resizeHandler = () => {
+      setSaveButtonPositionStyles(calcPositionStyles());
+    };
+    window.visualViewport?.addEventListener("resize", resizeHandler);
+    return () => window.visualViewport?.removeEventListener("resize", resizeHandler);
+  }, []);
 
   return (
     <Box>
       <Dialog
         fullScreen
         open={open}
-        onClose={handleClose}
+        onClose={() => onClose()}
         TransitionComponent={Transition}
       >
         <AppBar sx={{ position: "relative" }}>
@@ -57,7 +68,7 @@ const FullScreenDialog: React.FC<FullScreenDialogProps> = ({
             <IconButton
               edge="start"
               color="inherit"
-              onClick={handleClose}
+              onClick={() => onClose()}
               aria-label="close"
             >
               <CloseIcon />
@@ -74,17 +85,17 @@ const FullScreenDialog: React.FC<FullScreenDialogProps> = ({
           sx={{
             width: "100%",
             position: "fixed",
-            bottom: "5%",
             transform: "translateZ(0px)",
             flexGrow: 1,
             justifyContent: "space-around",
+            ...saveButtonPositionStyles,
           }}
         >
           <Fab
             disabled={saveButtonDisabled}
             variant="extended"
             color="secondary"
-            onClick={handleSave}
+            onClick={() => onSave()}
           >
             {saveButtonText}
           </Fab>
