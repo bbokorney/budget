@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Fab from "@mui/material/Fab";
@@ -35,77 +35,52 @@ const FullScreenDialog: React.FC<FullScreenDialogProps> = ({
   saveButtonDisabled = true,
   onClose = () => {},
   onSave = () => {},
-}) => {
-  const pixelsFromBottom = 80;
-  const calcPositionStyles = () => {
-    if (window.visualViewport) {
-      const topPixels = window.visualViewport.height - pixelsFromBottom;
-      return { top: `${topPixels}px`, bottom: 0 };
-    }
-    return { top: 0, bottom: `${pixelsFromBottom}px` };
-  };
-
-  const [saveButtonPositionStyles, setSaveButtonPositionStyles] = useState(calcPositionStyles);
-
-  useEffect(() => {
-    const resizeHandler = () => {
-      setSaveButtonPositionStyles(calcPositionStyles());
-    };
-    window.visualViewport?.addEventListener("resize", resizeHandler);
-    return () => window.visualViewport?.removeEventListener("resize", resizeHandler);
-  }, []);
-
-  return (
-    <Box>
-      <Dialog
-        fullScreen
-        open={open}
-        onClose={() => onClose()}
-        TransitionComponent={Transition}
-      >
-        <AppBar sx={{ position: "relative" }}>
-          <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={() => onClose()}
-              aria-label="close"
-            >
-              <CloseIcon />
-            </IconButton>
-            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              {title}
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Box sx={{ paddingBottom: `${pixelsFromBottom}px` }}>
-          {children}
-        </Box>
-
-        <Stack
-          direction="row"
-          sx={{
-            background: "#fff",
-            zIndex: 2,
-            width: "100%",
-            position: "fixed",
-            flexGrow: 1,
-            justifyContent: "space-around",
-            ...saveButtonPositionStyles,
-          }}
-        >
-          <Fab
-            disabled={saveButtonDisabled}
-            variant="extended"
-            color="secondary"
-            onClick={() => onSave()}
+}) => (
+  <Box>
+    <Dialog
+      fullScreen
+      open={open}
+      onClose={() => onClose()}
+      TransitionComponent={Transition}
+    >
+      <AppBar sx={{ position: "relative" }}>
+        <Toolbar>
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={() => onClose()}
+            aria-label="close"
           >
-            {saveButtonText}
-          </Fab>
-        </Stack>
-      </Dialog>
-    </Box>
-  );
-};
+            <CloseIcon />
+          </IconButton>
+          <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+            {title}
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      {children}
+
+      <Stack
+        direction="row"
+        sx={{
+          width: "100%",
+          position: "fixed",
+          flexGrow: 1,
+          justifyContent: "space-around",
+          bottom: "30px",
+        }}
+      >
+        <Fab
+          disabled={saveButtonDisabled}
+          variant="extended"
+          color="secondary"
+          onClick={() => onSave()}
+        >
+          {saveButtonText}
+        </Fab>
+      </Stack>
+    </Dialog>
+  </Box>
+);
 
 export default FullScreenDialog;
