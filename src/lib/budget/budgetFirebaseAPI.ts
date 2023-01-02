@@ -22,18 +22,28 @@ export default class BudgetFirebaseAPI {
     return doc(this.db, this.transactionsCollectionName, t.id);
   };
 
-  listTransactions = async (after?: Transaction): Promise<Transaction[]> => {
+  listTransactionsWithConstraints = async (...constraints: QueryConstraint[]): Promise<Transaction[]> => {
     const transactionsRef = collection(this.db, this.transactionsCollectionName);
-    const constraints: QueryConstraint[] = [orderBy("date", "desc")];
-    if (after?.date) {
-      constraints.push(where("date", "<", after.date));
-    }
-    constraints.push(limit(25));
     const q = query(transactionsRef, ...constraints);
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs
       .map((snapshot: QueryDocumentSnapshot) => ({ id: snapshot.id, ...snapshot.data() }));
   };
+
+  listTransactions = async (after?: Transaction): Promise<Transaction[]> => {
+    const constraints: QueryConstraint[] = [orderBy("date", "desc")];
+    if (after?.date) {
+      constraints.push(where("date", "<", after.date));
+    }
+    constraints.push(limit(25));
+    return this.listTransactionsWithConstraints(...constraints);
+  };
+
+  listTransactionsInDateRange = async (startDate: number, endDate: number): Promise<Transaction[]> => this
+    .listTransactionsWithConstraints(
+      where("date", ">=", startDate),
+      where("date", "<=", endDate),
+    );
 
   upsertTransaction = async (t: Transaction): Promise<Transaction> => {
     t = { ...t, source: "app" };

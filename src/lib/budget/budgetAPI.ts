@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { Transaction, Category } from "./models";
 import BudgetFirebaseAPI from "./budgetFirebaseAPI";
 import { clearListTransactionsPaginationState } from "./paginationSlice";
+import { getTotalsByCategory, CategoryTotals } from "./calculations";
 
 const api = new BudgetFirebaseAPI();
 
@@ -27,6 +28,14 @@ export const budgetApi = createApi({
       },
       forceRefetch({ currentArg, previousArg }) {
         return currentArg !== previousArg;
+      },
+      providesTags: ["Transactions"],
+    }),
+
+    getTotalsByCategoryInDateRange: builder.query<CategoryTotals, {startDate: number, endDate: number}>({
+      async queryFn({ startDate, endDate }) {
+        const transactions = await api.listTransactionsInDateRange(startDate, endDate);
+        return { data: getTotalsByCategory(transactions) };
       },
       providesTags: ["Transactions"],
     }),
@@ -65,6 +74,7 @@ export const {
   useListTransactionsQuery,
   useUpsertTransactionMutation,
   useGetTransactionQuery,
+  useGetTotalsByCategoryInDateRangeQuery,
   useListCategoriesQuery,
   useDeleteTransactionMutation,
 } = budgetApi;
