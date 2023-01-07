@@ -16,6 +16,10 @@ const TransactionsImport = () => {
       showLoading = true;
       loadingMessage = "Reading files...";
       break;
+    case "loadingTransactions":
+      showLoading = true;
+      loadingMessage = "Loading transactions...";
+      break;
     default:
   }
   if (error) {
@@ -46,6 +50,8 @@ const TransactionsImport = () => {
         </Stack>
       </Stack>
       )}
+
+      {state === "importingTransactions" && <SelectFiles />}
 
     </Stack>
   );
