@@ -14,7 +14,7 @@ const ResetDialog = () => {
   };
   const onClickReset = () => {
     setShowDialog(false);
-    dispatch(clearImportTransactionsState);
+    dispatch(clearImportTransactionsState());
   };
   return (
     <>

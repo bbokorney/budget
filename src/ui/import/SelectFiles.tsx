@@ -1,22 +1,14 @@
 import { ChangeEvent } from "react";
 import { Stack, Button, Typography } from "@mui/material";
+import { parseFiles } from "../../lib/import/importSlice";
+import { useAppDispatch } from "../../lib/store/hooks";
 
 const SelectFiles = () => {
+  const dispatch = useAppDispatch();
   const onUploadChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    const { files } = e.target;
-    Array(files?.length).fill(0).forEach(async (_, index) => {
-      const file = files?.item(index);
-      if (file) {
-        console.log(file.name);
-        console.log(file.type);
-        const text = await file.text();
-        text.split("\n").forEach((line) => {
-          if (line !== "") {
-            console.log(line);
-          }
-        });
-      }
-    });
+    if (e.target.files) {
+      dispatch(parseFiles(e.target.files));
+    }
   };
   return (
     <Stack spacing={1}>
