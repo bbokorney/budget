@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
 } from "@mui/material";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useAppDispatch } from "../../lib/store/hooks";
 import { clearImportTransactionsState } from "../../lib/import/importSlice";
 
@@ -17,7 +18,13 @@ const ResetDialog = () => {
   };
   return (
     <>
-      <Button variant="contained" onClick={() => setShowDialog(true)}>Start over</Button>
+      <Button
+        variant="contained"
+        onClick={() => setShowDialog(true)}
+        endIcon={<RestartAltIcon />}
+      >
+        Start over
+      </Button>
       <Dialog
         open={showDialog}
         onClose={handleDialogClose}
@@ -32,8 +39,8 @@ const ResetDialog = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose}>Cancel</Button>
-          <Button color="secondary" variant="contained" onClick={onClickReset} autoFocus>
-            Reset
+          <Button variant="contained" onClick={onClickReset} autoFocus>
+            Start over
           </Button>
         </DialogActions>
       </Dialog>

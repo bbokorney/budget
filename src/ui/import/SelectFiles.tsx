@@ -19,7 +19,7 @@ const SelectFiles = () => {
     });
   };
   return (
-    <Stack>
+    <Stack spacing={1}>
       <Stack direction="row" justifyContent="space-around">
         <Typography>
           Select CSV files to import.
