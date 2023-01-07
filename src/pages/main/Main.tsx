@@ -7,6 +7,7 @@ import Settings from "../settings/Settings";
 import Account from "../account/Account";
 import TransactionsList from "../transactions/List";
 import ViewTransaction from "../transactions/View";
+import TransactionsImport from "../transactions/Import";
 import TransactionsStats from "../transactions/Stats";
 import FloatingAddTransactionButton from "../../ui/layout/FloatingAddTransactionButton";
 import TransactionForm from "../transactions/Form";
@@ -20,6 +21,7 @@ const Main = () => (
         <Route path="/transactions">
           <Route path="list" element={<TransactionsList />} />
           <Route path="stats" element={<TransactionsStats />} />
+          <Route path="import" element={<TransactionsImport />} />
           <Route path=":id" element={<ViewTransaction />} />
         </Route>
         <Route path="/settings" element={<Settings />} />

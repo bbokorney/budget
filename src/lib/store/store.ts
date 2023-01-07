@@ -5,6 +5,7 @@ import authReducer from "../auth/authSlice";
 import formDialogReducer from "../formDialog/formDialogSlice";
 import transactionFormReducer from "../form/transactionFormSlice";
 import listTransactionsPaginationReducer from "../budget/paginationSlice";
+import importTransactionsReducer from "../import/importSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     formDialog: formDialogReducer,
     listTransactionsPagination: listTransactionsPaginationReducer,
     transactionForm: transactionFormReducer,
+    importTransactions: importTransactionsReducer,
     [budgetApi.reducerPath]: budgetApi.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(budgetApi.middleware),

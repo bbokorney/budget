@@ -2,14 +2,18 @@ import {
   Link as RouterLink,
   useLocation,
 } from "react-router-dom";
+import { useMediaQuery, useTheme } from "@mui/material";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import HomeIcon from "@mui/icons-material/Home";
 import ViewListIcon from "@mui/icons-material/ViewList";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 import Paper from "@mui/material/Paper";
 
 const BottomNavBar = () => {
   const location = useLocation();
+  const theme = useTheme();
+  const largeScreen = useMediaQuery(theme.breakpoints.up("lg"));
   return (
     <Paper
       sx={{
@@ -39,6 +43,16 @@ const BottomNavBar = () => {
           component={RouterLink}
           to="/transactions/list"
         />
+        {largeScreen
+        && (
+        <BottomNavigationAction
+          label="Import"
+          value="/transactions/import"
+          icon={<UploadFileIcon />}
+          component={RouterLink}
+          to="/transactions/import"
+        />
+        )}
       </BottomNavigation>
     </Paper>
   );
