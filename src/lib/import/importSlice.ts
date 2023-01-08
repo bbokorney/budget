@@ -10,7 +10,7 @@ const api = new BudgetFirebaseAPI();
 export type TransactionToImport = {
   sourceFile: string;
   transaction: Transaction;
-  actionTaken?: "imported" | "skipped";
+  actionTaken?: "saved" | "skipped";
 }
 
 export interface ImportTransactionsState {
@@ -35,8 +35,9 @@ export const importTransactionsSlice = createSlice({
   name: "importTransactions",
   initialState,
   reducers: {
-    nextTransaction: (state) => {
+    nextTransaction: (state, action: PayloadAction<TransactionToImport["actionTaken"]>) => {
       if (state.transactionsIndex < state.transactionsToImport.length) {
+        state.transactionsToImport[state.transactionsIndex].actionTaken = action.payload;
         state.transactionsIndex += 1;
       }
     },

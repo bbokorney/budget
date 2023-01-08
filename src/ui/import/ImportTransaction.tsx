@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Box, Stack, Button, Typography, LinearProgress,
+  Alert, Box, Stack, Button, Typography, LinearProgress,
 } from "@mui/material";
 import {
   selectImportTransactions,
@@ -28,6 +28,19 @@ const ImportTransaction = () => {
 
   const similarTransactions = useAppSelector((state) => selectSimilarTransactions(state, currentTransaction));
 
+  const actionTakenMessage = () => {
+    if (!currentTransaction) {
+      return <div />;
+    }
+    switch (currentTransaction.actionTaken) {
+      case "saved":
+      case "skipped":
+        return <Alert severity="info">This transaction was already {currentTransaction.actionTaken}.</Alert>;
+      default:
+        return <div />;
+    }
+  };
+
   return (
     <Stack spacing={1}>
       <Stack direction="row" spacing={1}>
@@ -53,11 +66,20 @@ const ImportTransaction = () => {
         <Button
           color="secondary"
           variant="contained"
-          onClick={() => dispatch(nextTransaction())}
+          onClick={() => dispatch(nextTransaction("saved"))}
         >
-          Next
+          Save
+        </Button>
+        <Button
+          color="secondary"
+          variant="contained"
+          onClick={() => dispatch(nextTransaction("skipped"))}
+        >
+          Skip
         </Button>
       </Stack>
+
+      {currentTransaction && actionTakenMessage()}
 
       {currentTransaction
         ? (
