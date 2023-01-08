@@ -1,7 +1,8 @@
 import React from "react";
 import {
-  Alert, Box, Stack, Button, Typography, LinearProgress,
+  Alert, Box, Stack, Button, Typography, LinearProgress, Divider,
 } from "@mui/material";
+import { ArrowForward, ArrowBack, Save } from "@mui/icons-material";
 import {
   selectImportTransactions,
   nextTransaction,
@@ -60,13 +61,15 @@ const ImportTransaction = () => {
           color="secondary"
           variant="contained"
           onClick={() => dispatch(previousTransaction())}
+          startIcon={<ArrowBack />}
         >
-          Previous
+          Back
         </Button>
         <Button
           color="secondary"
           variant="contained"
           onClick={() => dispatch(nextTransaction("saved"))}
+          endIcon={<Save />}
         >
           Save
         </Button>
@@ -74,12 +77,15 @@ const ImportTransaction = () => {
           color="secondary"
           variant="contained"
           onClick={() => dispatch(nextTransaction("skipped"))}
+          endIcon={<ArrowForward />}
         >
           Skip
         </Button>
       </Stack>
 
       {currentTransaction && actionTakenMessage()}
+
+      <Divider sx={{ pt: 1 }} />
 
       {currentTransaction
         ? (
@@ -88,6 +94,8 @@ const ImportTransaction = () => {
             transaction={currentTransaction.transaction}
           />
         ) : <Typography>End of transactions</Typography>}
+
+      <Divider sx={{ pt: 1 }} />
 
       {similarTransactions.map((t) => <TransactionView transaction={t} />)}
 
