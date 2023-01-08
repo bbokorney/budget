@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { subDays, addDays } from "date-fns";
+import { subDays, addDays, isWithinInterval } from "date-fns";
 import { RootState } from "../store/store";
 import { Transaction } from "../budget/models";
 import parseTransactions from "./fileParsing";
@@ -108,6 +108,26 @@ export const selectCurrentImportTransaction = (state: RootState) => {
     return undefined;
   }
   return transactions[index];
+};
+
+const amountRatio = 0.05;
+
+export const selectSimilarTransactions = (state: RootState, toImport?: TransactionToImport) => {
+  if (!toImport) {
+    return [];
+  }
+
+  const startDate = subDays(toImport.transaction.date ?? 0, dateRange);
+  const endDate = addDays(toImport.transaction.date ?? 0, dateRange);
+  const amount = -1 * (toImport.transaction.amount ?? 0);
+  const minAmount = amount - (amount * amountRatio);
+  const maxAmount = amount + (amount * amountRatio);
+  return state.importTransactions.existingTransactions
+    .filter((t) => isWithinInterval(t.date ?? 0, { start: startDate, end: endDate }))
+    .filter((t) => {
+      const a = t.amount ?? 0;
+      return a >= minAmount && a <= maxAmount;
+    });
 };
 
 export default importTransactionsSlice.reducer;
