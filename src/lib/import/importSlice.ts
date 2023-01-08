@@ -10,15 +10,15 @@ const api = new BudgetFirebaseAPI();
 export type TransactionToImport = {
   sourceFile: string;
   transaction: Transaction;
+  actionTaken?: "imported" | "skipped";
 }
 
 export interface ImportTransactionsState {
   state: "selectFiles" |
     "parsingFiles" |
     "loadingTransactions" |
-    "importingTransactions" |
-    "endOfTransactions";
-  error: string | undefined;
+    "importingTransactions";
+  error?: string;
   transactionsIndex: number;
   transactionsToImport: TransactionToImport[],
   existingTransactions: Transaction[],
@@ -26,7 +26,6 @@ export interface ImportTransactionsState {
 
 const initialState: ImportTransactionsState = {
   state: "selectFiles",
-  error: undefined,
   transactionsIndex: 0,
   transactionsToImport: [],
   existingTransactions: [],
@@ -40,17 +39,11 @@ export const importTransactionsSlice = createSlice({
       if (state.transactionsIndex < state.transactionsToImport.length) {
         state.transactionsIndex += 1;
       }
-      if (state.transactionsIndex === state.transactionsToImport.length) {
-        state.state = "endOfTransactions";
-      }
     },
 
     previousTransaction: (state) => {
       if (state.transactionsIndex > 0) {
         state.transactionsIndex -= 1;
-      }
-      if (state.transactionsIndex === state.transactionsToImport.length) {
-        state.state = "importingTransactions";
       }
     },
 
@@ -107,5 +100,14 @@ export const {
 } = importTransactionsSlice.actions;
 
 export const selectImportTransactions = (state: RootState) => state.importTransactions;
+
+export const selectCurrentImportTransaction = (state: RootState) => {
+  const index = state.importTransactions.transactionsIndex;
+  const transactions = state.importTransactions.transactionsToImport;
+  if (index >= transactions.length) {
+    return undefined;
+  }
+  return transactions[index];
+};
 
 export default importTransactionsSlice.reducer;

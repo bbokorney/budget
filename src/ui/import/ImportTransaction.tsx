@@ -5,6 +5,7 @@ import {
   selectImportTransactions,
   nextTransaction,
   previousTransaction,
+  selectCurrentImportTransaction,
 } from "../../lib/import/importSlice";
 import { useAppDispatch, useAppSelector } from "../../lib/store/hooks";
 import formatDate from "../../lib/dates/format";
@@ -14,21 +15,19 @@ const ImportTransaction = () => {
   const dispatch = useAppDispatch();
 
   const {
-    state,
     transactionsIndex: index,
     transactionsToImport,
   } = useAppSelector(selectImportTransactions);
-  if (state === "endOfTransactions") {
-    return <Typography>End of transactions</Typography>;
-  }
-  const currentTransaction = transactionsToImport[index];
+
+  const currentTransaction = useAppSelector(selectCurrentImportTransaction);
+
   const progress = 100 * (index / transactionsToImport.length);
 
   return (
     <Stack spacing={1}>
       <Stack direction="row" spacing={1}>
         <Typography>
-          {`${index + 1} of ${transactionsToImport.length}`}
+          {`${Math.min(index + 1, transactionsToImport.length)} of ${transactionsToImport.length}`}
         </Typography>
       </Stack>
 
@@ -37,24 +36,7 @@ const ImportTransaction = () => {
           <LinearProgress variant="determinate" value={progress} />
         </Box>
       </Box>
-      <Stack direction="row">
-        <Typography>
-          {`From ${currentTransaction.sourceFile}`}
-        </Typography>
-      </Stack>
-      <Stack direction="row" spacing={1}>
-        <Typography>
-          {formatDate(currentTransaction.transaction.date)}
-        </Typography>
-        <Typography sx={{ fontWeight: "bold" }}>
-          {formatCurrency(-1 * (currentTransaction.transaction.amount ?? 0))}
-        </Typography>
-      </Stack>
-      <Stack direction="row" spacing={1}>
-        <Typography>
-          {currentTransaction.transaction.vendor}
-        </Typography>
-      </Stack>
+
       <Stack direction="row" spacing={1}>
         <Button
           color="secondary"
@@ -71,6 +53,31 @@ const ImportTransaction = () => {
           Next
         </Button>
       </Stack>
+
+      {currentTransaction
+        ? (
+          <>
+            <Stack direction="row">
+              <Typography>
+                {`From ${currentTransaction.sourceFile}`}
+              </Typography>
+            </Stack>
+            <Stack direction="row" spacing={1}>
+              <Typography>
+                {formatDate(currentTransaction.transaction.date)}
+              </Typography>
+              <Typography sx={{ fontWeight: "bold" }}>
+                {formatCurrency(-1 * (currentTransaction.transaction.amount ?? 0))}
+              </Typography>
+            </Stack>
+            <Stack direction="row" spacing={1}>
+              <Typography>
+                {currentTransaction.transaction.vendor}
+              </Typography>
+            </Stack>
+          </>
+        ) : <Typography>End of transactions</Typography>}
+
     </Stack>
   );
 };

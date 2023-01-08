@@ -52,7 +52,7 @@ const TransactionsImport = () => {
       </Stack>
       )}
 
-      {(state === "importingTransactions" || state === "endOfTransactions") && <ImportTransaction /> }
+      {state === "importingTransactions" && <ImportTransaction /> }
 
     </Stack>
   );
