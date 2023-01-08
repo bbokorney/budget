@@ -1,5 +1,5 @@
 import {
-  Alert,
+  Alert, Button, Stack, Typography,
 } from "@mui/material";
 import {
   selectCurrentImportTransaction,
@@ -13,6 +13,21 @@ const ActionTakenAlert = () => {
   }
   switch (currentTransaction.actionTaken) {
     case "saved":
+      return (
+        <Alert severity="info">
+          <Stack direction="row" spacing={1}>
+            <Typography>
+              This transaction was already {currentTransaction.actionTaken}.
+            </Typography>
+            <Button
+              sx={{ padding: 0 }}
+              color="secondary"
+            >
+              Undo
+            </Button>
+          </Stack>
+        </Alert>
+      );
     case "skipped":
       return <Alert severity="info">This transaction was already {currentTransaction.actionTaken}.</Alert>;
     default:

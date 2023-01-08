@@ -19,7 +19,7 @@ const TransactionView: React.FC<TransactionViewProps> = ({
       {sourceFile
       && (
       <Typography>
-        {`From ${sourceFile}`}
+        From <Typography sx={{ fontFamily: "monospace" }} component="span">{sourceFile}</Typography>
       </Typography>
       )}
     </Stack>

@@ -11,6 +11,7 @@ export type TransactionToImport = {
   sourceFile: string;
   transaction: Transaction;
   actionTaken?: "saved" | "skipped";
+  savedTransactionId?: string;
 }
 
 export interface ImportTransactionsState {

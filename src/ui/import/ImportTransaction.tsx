@@ -17,7 +17,7 @@ const ImportTransaction = () => {
   const similarTransactions = useAppSelector((state) => selectSimilarTransactions(state, currentTransaction));
 
   return (
-    <Stack spacing={1}>
+    <Stack spacing={2}>
 
       <ProgressIndicator />
 
@@ -25,7 +25,7 @@ const ImportTransaction = () => {
 
       <ActionTakenAlert />
 
-      <Divider sx={{ pt: 1 }} />
+      <Divider />
 
       {currentTransaction
         ? (
@@ -35,7 +35,7 @@ const ImportTransaction = () => {
           />
         ) : <Typography>End of transactions</Typography>}
 
-      <Divider sx={{ pt: 1 }} />
+      <Divider />
 
       {similarTransactions.map((t) => <TransactionView transaction={t} />)}
 
