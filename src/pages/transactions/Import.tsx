@@ -3,6 +3,7 @@ import {
 } from "@mui/material";
 import SelectFiles from "../../ui/import/SelectFiles";
 import ResetDialog from "../../ui/import/ResetDialog";
+import ImportTransaction from "../../ui/import/ImportTransaction";
 import { selectImportTransactions } from "../../lib/import/importSlice";
 import { useAppSelector } from "../../lib/store/hooks";
 
@@ -51,7 +52,7 @@ const TransactionsImport = () => {
       </Stack>
       )}
 
-      {state === "importingTransactions" && <SelectFiles />}
+      {(state === "importingTransactions" || state === "endOfTransactions") && <ImportTransaction /> }
 
     </Stack>
   );

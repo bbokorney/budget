@@ -36,6 +36,24 @@ export const importTransactionsSlice = createSlice({
   name: "importTransactions",
   initialState,
   reducers: {
+    nextTransaction: (state) => {
+      if (state.transactionsIndex < state.transactionsToImport.length) {
+        state.transactionsIndex += 1;
+      }
+      if (state.transactionsIndex === state.transactionsToImport.length) {
+        state.state = "endOfTransactions";
+      }
+    },
+
+    previousTransaction: (state) => {
+      if (state.transactionsIndex > 0) {
+        state.transactionsIndex -= 1;
+      }
+      if (state.transactionsIndex === state.transactionsToImport.length) {
+        state.state = "importingTransactions";
+      }
+    },
+
     updateImportTransactionsState:
     (state, action: PayloadAction<ImportTransactionsState["state"]>) => { state.state = action.payload; },
 
@@ -83,6 +101,8 @@ export const {
   updateImportTransactionsState,
   updateTransactionsToImport,
   updateExistingTransactions,
+  nextTransaction,
+  previousTransaction,
   clearImportTransactionsState,
 } = importTransactionsSlice.actions;
 
