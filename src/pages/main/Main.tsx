@@ -10,7 +10,7 @@ import ViewTransaction from "../transactions/View";
 import TransactionsImport from "../transactions/Import";
 import TransactionsStats from "../transactions/Stats";
 import FloatingAddTransactionButton from "../../ui/layout/FloatingAddTransactionButton";
-import TransactionForm from "../transactions/Form";
+import TransactionForm from "../transactions/FullscreenDialogForm";
 
 const Main = () => (
   <BrowserRouter>

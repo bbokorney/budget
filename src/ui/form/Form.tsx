@@ -1,32 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   Stack, FormControl, CircularProgress, Typography, Backdrop,
 } from "@mui/material";
 import { Check } from "@mui/icons-material";
 import { useAppSelector, useAppDispatch } from "../../lib/store/hooks";
-import { clearFormDialogState, selectFormDialog } from "../../lib/formDialog/formDialogSlice";
-import FullScreenDialog from "../../ui/dialog/FullScreen";
 import {
   selectTransactionForm, clearTransactionFormState, updateTransactionFormState,
 } from "../../lib/form/transactionFormSlice";
-import { Transaction } from "../../lib/budget/models";
+import { clearFormDialogState } from "../../lib/formDialog/formDialogSlice";
 import { useListCategoriesQuery, useUpsertTransactionMutation } from "../../lib/budget/budgetAPI";
-import FormSelect from "../../ui/form/FormSelect";
-import FormTextField from "../../ui/form/FormTextInput";
-import CurrencyTextInput from "../../ui/form/CurrencyTextInput";
-import FormDatePicker from "../../ui/form/FormDatePicker";
+import { Transaction } from "../../lib/budget/models";
+import FormSelect from "./FormSelect";
+import FormTextField from "./FormTextInput";
+import CurrencyTextInput from "./CurrencyTextInput";
+import FormDatePicker from "./FormDatePicker";
 
 type TransactionFormProps = {
+  upsertCacheKey?: string;
   onClose?: () => void;
+  // eslint-disable-next-line no-unused-vars
+  onTransactionValidChange?: (valid: boolean) => void;
 }
 
 const TransactionForm: React.FC<TransactionFormProps> = ({
+  upsertCacheKey = "",
   onClose = () => {},
+  // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
+  onTransactionValidChange = (_: boolean) => {},
 }) => {
   const dispatch = useAppDispatch();
-  const { open, actionType } = useAppSelector(selectFormDialog);
+
   const { transaction } = useAppSelector(selectTransactionForm);
-  const [saveButtonEnabled, setSaveButtonEnabled] = useState(false);
 
   const { data: categories, isLoading: isCategoriesLoading } = useListCategoriesQuery();
   const categoryOptions = categories?.map(
@@ -39,19 +43,13 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     return categoryOptions?.find((option) => name === option?.value);
   };
 
-  const onDialogClose = () => {
-    dispatch(clearFormDialogState());
-    dispatch(clearTransactionFormState());
-  };
-
   const [
-    upsertTransaction,
+    // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
+    _,
     { isLoading: isUpserting, isSuccess: isUpsertSuccess, reset },
-  ] = useUpsertTransactionMutation();
-
-  const onClickSave = async () => {
-    upsertTransaction(transaction);
-  };
+  ] = useUpsertTransactionMutation({
+    fixedCacheKey: upsertCacheKey,
+  });
 
   useEffect(() => {
     if (isUpsertSuccess) {
@@ -59,7 +57,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         onClose();
         dispatch(clearFormDialogState());
         dispatch(clearTransactionFormState());
-        setSaveButtonEnabled(false);
+        onTransactionValidChange(false);
         reset();
       }, 1000);
     }
@@ -73,26 +71,17 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     if (t.amount !== undefined && t.amount > 0
       && t.category !== undefined && t.category !== ""
       && t.vendor !== undefined && t.vendor !== "") {
-      setSaveButtonEnabled(true);
+      onTransactionValidChange(true);
     } else {
-      setSaveButtonEnabled(false);
+      onTransactionValidChange(false);
     }
   };
 
   const backdropOpen = isCategoriesLoading || isUpserting || isUpsertSuccess;
 
   const formControlSx = { m: 1, minWidth: 120 };
-
   return (
-    <FullScreenDialog
-      open={open}
-      title={`${actionType} transaction`}
-      onClose={onDialogClose}
-      onSave={onClickSave}
-      saveButtonDisabled={!saveButtonEnabled}
-      saveButtonText="Save transaction"
-    >
-
+    <>
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={backdropOpen}
@@ -148,7 +137,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           />
         </FormControl>
       </Stack>
-    </FullScreenDialog>
+    </>
   );
 };
 
