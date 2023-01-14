@@ -1,10 +1,11 @@
 import {
-  Alert, Button, Stack, Typography,
+  Alert, Stack, Typography,
 } from "@mui/material";
 import {
   selectCurrentImportTransaction,
 } from "../../lib/import/importSlice";
 import { useAppSelector } from "../../lib/store/hooks";
+import UndoButton from "./UndoButton";
 
 const ActionTakenAlert = () => {
   const currentTransaction = useAppSelector(selectCurrentImportTransaction);
@@ -24,15 +25,7 @@ const ActionTakenAlert = () => {
           <Typography>
             This transaction was already {actionTaken}.
           </Typography>
-          {actionTaken === "saved"
-          && (
-          <Button
-            sx={{ padding: 0 }}
-            color="secondary"
-          >
-            Undo
-          </Button>
-          )}
+          <UndoButton />
         </Stack>
       </Alert>
     );
