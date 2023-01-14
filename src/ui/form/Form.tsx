@@ -80,6 +80,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const backdropOpen = isCategoriesLoading || isUpserting || isUpsertSuccess;
 
   const formControlSx = { m: 1, minWidth: 120 };
+
   return (
     <>
       <Backdrop
