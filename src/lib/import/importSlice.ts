@@ -4,6 +4,7 @@ import { RootState } from "../store/store";
 import { Transaction } from "../budget/models";
 import parseTransactions from "./fileParsing";
 import BudgetFirebaseAPI from "../budget/budgetFirebaseAPI";
+import { budgetApi } from "../budget/budgetAPI";
 
 const api = new BudgetFirebaseAPI();
 
@@ -32,6 +33,11 @@ const initialState: ImportTransactionsState = {
   existingTransactions: [],
 };
 
+type UpdateTransactionSavedIdArgs = {
+  index: number;
+  id: string;
+}
+
 export const importTransactionsSlice = createSlice({
   name: "importTransactions",
   initialState,
@@ -47,6 +53,11 @@ export const importTransactionsSlice = createSlice({
       if (state.transactionsIndex > 0) {
         state.transactionsIndex -= 1;
       }
+    },
+
+    updateTransactionSavedId:
+    (state, action: PayloadAction<UpdateTransactionSavedIdArgs>) => {
+      state.transactionsToImport[action.payload.index].savedTransactionId = action.payload.id;
     },
 
     updateImportTransactionsState:
@@ -69,8 +80,6 @@ export const importTransactionsSlice = createSlice({
   },
 });
 
-const dateRange = 5;
-
 export const parseFiles = createAsyncThunk(
   "import/parseFiles",
   async (files: FileList, thunkApi) => {
@@ -92,6 +101,27 @@ export const parseFiles = createAsyncThunk(
   },
 );
 
+export type ImportTransactionArgs = {
+  transaction: Transaction;
+  mutationFixedCacheKey: string;
+}
+
+export const importCurrentTransaction = createAsyncThunk(
+  "import/importCurrentTransaction",
+  async (args: ImportTransactionArgs, thunkApi) => {
+    const index = selectImportTransactions(thunkApi.getState() as RootState).transactionsIndex;
+    const result = thunkApi.dispatch(
+      budgetApi.endpoints.upsertTransaction.initiate(
+        args.transaction,
+        { fixedCacheKey: args.mutationFixedCacheKey },
+      ),
+    );
+
+    const newTransaction = await result.unwrap();
+    thunkApi.dispatch(updateTransactionSavedId({ index, id: newTransaction.id ?? "" }));
+  },
+);
+
 export const {
   updateImportTransactionsState,
   updateTransactionsToImport,
@@ -99,6 +129,7 @@ export const {
   nextTransaction,
   previousTransaction,
   clearImportTransactionsState,
+  updateTransactionSavedId,
 } = importTransactionsSlice.actions;
 
 export const selectImportTransactions = (state: RootState) => state.importTransactions;
@@ -112,6 +143,7 @@ export const selectCurrentImportTransaction = (state: RootState) => {
   return transactions[index];
 };
 
+const dateRange = 5;
 const amountRatio = 0.05;
 
 export const selectSimilarTransactions = (state: RootState, toImport?: TransactionToImport) => {

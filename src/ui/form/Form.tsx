@@ -5,9 +5,8 @@ import {
 import { Check } from "@mui/icons-material";
 import { useAppSelector, useAppDispatch } from "../../lib/store/hooks";
 import {
-  selectTransactionForm, clearTransactionFormState, updateTransactionFormState,
+  selectTransactionForm, updateTransactionFormState,
 } from "../../lib/form/transactionFormSlice";
-import { clearFormDialogState } from "../../lib/formDialog/formDialogSlice";
 import { useListCategoriesQuery, useUpsertTransactionMutation } from "../../lib/budget/budgetAPI";
 import { Transaction } from "../../lib/budget/models";
 import FormSelect from "./FormSelect";
@@ -46,7 +45,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const [
     // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
     _,
-    { isLoading: isUpserting, isSuccess: isUpsertSuccess, reset },
+    {
+      isLoading: isUpserting, isSuccess: isUpsertSuccess, isUninitialized, reset,
+    },
   ] = useUpsertTransactionMutation({
     fixedCacheKey: upsertCacheKey,
   });
@@ -55,8 +56,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     if (isUpsertSuccess) {
       setTimeout(() => {
         onClose();
-        dispatch(clearFormDialogState());
-        dispatch(clearTransactionFormState());
         onTransactionValidChange(false);
         reset();
       }, 1000);
@@ -89,7 +88,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       >
         <Stack spacing={2} alignItems="center">
           {isUpsertSuccess ? <Check color="primary" /> : <CircularProgress /> }
-          <Typography>{isUpsertSuccess ? "Transaction saved" : "Saving..."}</Typography>
+          {!isUninitialized && <Typography>{isUpsertSuccess ? "Transaction saved" : "Saving..."}</Typography>}
         </Stack>
       </Backdrop>
 

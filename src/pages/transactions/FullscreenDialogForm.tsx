@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../lib/store/hooks";
 import { clearFormDialogState, selectFormDialog } from "../../lib/formDialog/formDialogSlice";
 import FullScreenDialog from "../../ui/dialog/FullScreen";
@@ -8,13 +8,7 @@ import {
 import { useUpsertTransactionMutation } from "../../lib/budget/budgetAPI";
 import TransactionForm from "../../ui/form/Form";
 
-type FullScreenDialogTransactionFormProps = {
-  onClose?: () => void;
-}
-
-const FullScreenDialogTransactionForm: React.FC<FullScreenDialogTransactionFormProps> = ({
-  onClose = () => {},
-}) => {
+const FullScreenDialogTransactionForm = () => {
   const dispatch = useAppDispatch();
   const { open, actionType } = useAppSelector(selectFormDialog);
   const { transaction } = useAppSelector(selectTransactionForm);
@@ -47,7 +41,7 @@ const FullScreenDialogTransactionForm: React.FC<FullScreenDialogTransactionFormP
     >
       <TransactionForm
         upsertCacheKey={upsertCacheKey}
-        onClose={onClose}
+        onClose={onDialogClose}
         onTransactionValidChange={(valid) => setSaveButtonEnabled(valid)}
       />
 
