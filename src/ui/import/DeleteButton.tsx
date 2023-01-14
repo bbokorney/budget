@@ -5,7 +5,7 @@ import {
 import { useAppSelector } from "../../lib/store/hooks";
 import { useDeleteTransactionMutation } from "../../lib/budget/budgetAPI";
 
-const UndoButton = () => {
+const DeleteButton = () => {
   const currentTransaction = useAppSelector(selectCurrentImportTransaction);
   const savedTransactionId = currentTransaction?.savedTransactionId;
 
@@ -31,11 +31,11 @@ const UndoButton = () => {
             disabled={isDeleteSuccess}
             loading={isDeleting}
           >
-            {isDeleteSuccess ? "Deleted" : "Undo"}
+            {isDeleteSuccess ? "Deleted" : "Delete"}
           </LoadingButton>
         ) : <span />}
     </div>
   );
 };
 
-export default UndoButton;
+export default DeleteButton;

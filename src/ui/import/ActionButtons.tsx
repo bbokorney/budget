@@ -7,7 +7,7 @@ import {
   previousTransaction,
 } from "../../lib/import/importSlice";
 import { useAppDispatch } from "../../lib/store/hooks";
-import SaveDialog from "./SaveDialog";
+import SaveButton from "./SaveButton";
 
 const ActionButtons = () => {
   const dispatch = useAppDispatch();
@@ -23,7 +23,7 @@ const ActionButtons = () => {
         Back
       </Button>
 
-      <SaveDialog />
+      <SaveButton />
 
       <Button
         color="secondary"

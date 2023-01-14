@@ -5,7 +5,8 @@ import {
   selectCurrentImportTransaction,
 } from "../../lib/import/importSlice";
 import { useAppSelector } from "../../lib/store/hooks";
-import UndoButton from "./UndoButton";
+import DeleteButton from "./DeleteButton";
+import EditButton from "./EditButton";
 
 const ActionTakenAlert = () => {
   const currentTransaction = useAppSelector(selectCurrentImportTransaction);
@@ -25,7 +26,10 @@ const ActionTakenAlert = () => {
           <Typography>
             This transaction was already {actionTaken}.
           </Typography>
-          <UndoButton />
+
+          <EditButton />
+
+          <DeleteButton />
         </Stack>
       </Alert>
     );

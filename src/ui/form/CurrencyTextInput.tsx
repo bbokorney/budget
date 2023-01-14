@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { TextField, InputAdornment } from "@mui/material";
-import { formatWholeNumbers } from "../../lib/currency/format";
+import { formatWholeNumbers, formatCurrency } from "../../lib/currency/format";
 
 export type CurrencyTextInputProps = {
   label?: string;
@@ -15,7 +15,7 @@ const CurrencyTextInput: React.FC<CurrencyTextInputProps> = ({
   onChange: onChangeCallback = (_: number) => {},
 }) => {
   const validDigitKeys = Array(10).fill(0).map((_, index) => index.toString());
-  const [value, setValue] = useState(initialValue ? initialValue.toFixed(2) : "");
+  const [value, setValue] = useState(initialValue ? formatCurrency(initialValue) : "");
   const [error, setError] = useState("");
   const onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     let newValue = value;
