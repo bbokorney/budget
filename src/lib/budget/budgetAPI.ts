@@ -67,6 +67,13 @@ export const budgetApi = createApi({
       },
       providesTags: ["Categories"],
     }),
+
+    upsertCategory: builder.mutation<Category, Category>({
+      async queryFn(c) {
+        return { data: await api.upsertCategory(c) };
+      },
+      invalidatesTags: ["Categories"],
+    }),
   }),
 });
 
@@ -75,6 +82,7 @@ export const {
   useUpsertTransactionMutation,
   useGetTransactionQuery,
   useGetTotalsByCategoryInDateRangeQuery,
-  useListCategoriesQuery,
   useDeleteTransactionMutation,
+  useListCategoriesQuery,
+  useUpsertCategoryMutation,
 } = budgetApi;

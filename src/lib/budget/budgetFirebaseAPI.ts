@@ -22,6 +22,13 @@ export default class BudgetFirebaseAPI {
     return doc(this.db, this.transactionsCollectionName, t.id);
   };
 
+  categoryDocReference = (c: Category) => {
+    if (!c.id) {
+      throw new Error("Category has no ID");
+    }
+    return doc(this.db, this.categoriesCollectionName, c.id);
+  };
+
   listTransactionsWithConstraints = async (...constraints: QueryConstraint[]): Promise<Transaction[]> => {
     const transactionsRef = collection(this.db, this.transactionsCollectionName);
     const q = query(transactionsRef, ...constraints);
@@ -77,5 +84,17 @@ export default class BudgetFirebaseAPI {
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs
       .map((snapshot: QueryDocumentSnapshot) => ({ id: snapshot.id, ...snapshot.data() }));
+  };
+
+  upsertCategory = async (c: Category): Promise<Category> => {
+    if (c.id) {
+      await setDoc(this.categoryDocReference(c), c);
+      return c;
+    }
+    const docRef = await addDoc(collection(this.db, this.categoriesCollectionName), c);
+    return {
+      id: docRef.id,
+      ...c,
+    };
   };
 }

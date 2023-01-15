@@ -11,6 +11,7 @@ import TransactionsImport from "../transactions/Import";
 import TransactionsStats from "../transactions/Stats";
 import FloatingAddTransactionButton from "../../ui/layout/FloatingAddTransactionButton";
 import FullScreenDialogTransactionForm from "../transactions/FullscreenDialogForm";
+import Categories from "../settings/Categories";
 
 const Main = () => (
   <BrowserRouter>
@@ -24,7 +25,10 @@ const Main = () => (
           <Route path="import" element={<TransactionsImport />} />
           <Route path=":id" element={<ViewTransaction />} />
         </Route>
-        <Route path="/settings" element={<Settings />} />
+        <Route path="/settings">
+          <Route path="" element={<Settings />} />
+          <Route path="categories" element={<Categories />} />
+        </Route>
         <Route path="/account" element={<Account />} />
       </Routes>
       <FullScreenDialogTransactionForm />
