@@ -84,11 +84,14 @@ const Categories = () => {
           </Stack>
 
           <List>
-            {categories && categories.map((c) => (
-              <ListItem key={c.id}>
-                <ListItemText>{c.name}</ListItemText>
-              </ListItem>
-            ))}
+            {categories && categories
+              .slice()
+              .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""))
+              .map((c) => (
+                <ListItem key={c.id}>
+                  <ListItemText>{c.name}</ListItemText>
+                </ListItem>
+              ))}
           </List>
 
         </Stack>
