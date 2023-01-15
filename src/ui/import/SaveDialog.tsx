@@ -14,9 +14,10 @@ import TransactionForm from "../form/Form";
 type SaveDialogProps = {
   open: boolean;
   onClose: () => void;
+  onTransactionSaved: () => void;
 }
 
-const SaveDialog: React.FC<SaveDialogProps> = ({ open, onClose }) => {
+const SaveDialog: React.FC<SaveDialogProps> = ({ open, onClose, onTransactionSaved }) => {
   const mutationFixedCacheKey = "import-transaction-form";
 
   const dispatch = useAppDispatch();
@@ -45,6 +46,7 @@ const SaveDialog: React.FC<SaveDialogProps> = ({ open, onClose }) => {
         <TransactionForm
           upsertCacheKey={mutationFixedCacheKey}
           onClose={handleDialogClose}
+          onTransactionSaved={onTransactionSaved}
           onTransactionValidChange={(valid) => setSaveButtonEnabled(valid)}
         />
       </DialogContent>

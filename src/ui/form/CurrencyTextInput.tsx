@@ -15,7 +15,7 @@ const CurrencyTextInput: React.FC<CurrencyTextInputProps> = ({
   onChange: onChangeCallback = (_: number) => {},
 }) => {
   const validDigitKeys = Array(10).fill(0).map((_, index) => index.toString());
-  const [value, setValue] = useState(initialValue ? formatCurrency(initialValue) : "");
+  const [value, setValue] = useState(initialValue ? formatCurrency(initialValue, "") : "");
   const [error, setError] = useState("");
   const onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     let newValue = value;

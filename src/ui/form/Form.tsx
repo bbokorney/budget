@@ -17,6 +17,7 @@ import FormDatePicker from "./FormDatePicker";
 type TransactionFormProps = {
   upsertCacheKey?: string;
   onClose?: () => void;
+  onTransactionSaved?: () => void;
   // eslint-disable-next-line no-unused-vars
   onTransactionValidChange?: (valid: boolean) => void;
 }
@@ -24,6 +25,7 @@ type TransactionFormProps = {
 const TransactionForm: React.FC<TransactionFormProps> = ({
   upsertCacheKey = "",
   onClose = () => {},
+  onTransactionSaved = () => {},
   // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
   onTransactionValidChange = (_: boolean) => {},
 }) => {
@@ -56,6 +58,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     if (isUpsertSuccess) {
       setTimeout(() => {
         onClose();
+        onTransactionSaved();
         onTransactionValidChange(false);
         reset();
       }, 1000);

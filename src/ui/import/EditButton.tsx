@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
 import {
   selectCurrentImportTransaction,
@@ -16,9 +16,36 @@ const EditButton = () => {
   const currentTransaction = useAppSelector(selectCurrentImportTransaction);
   const savedTransactionId = currentTransaction?.savedTransactionId;
 
-  const { data, isLoading } = savedTransactionId
-    ? useGetTransactionQuery(savedTransactionId ?? "")
-    : { data: { amount: undefined }, isLoading: false };
+  return (
+    <>
+      {savedTransactionId
+        ? (
+          <EnabledEditButton
+            onClick={() => setDialogOpen(true)}
+          />
+        ) : <span />}
+      <SaveDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onTransactionSaved={() => dispatch(nextTransaction("saved"))}
+      />
+    </>
+  );
+};
+
+export default EditButton;
+
+type EnabledEditButtonProps = {
+  onClick: () => void;
+}
+
+const EnabledEditButton: React.FC<EnabledEditButtonProps> = ({ onClick }) => {
+  const dispatch = useAppDispatch();
+
+  const currentTransaction = useAppSelector(selectCurrentImportTransaction);
+  const savedTransactionId = currentTransaction?.savedTransactionId;
+
+  const { data, isLoading } = useGetTransactionQuery(savedTransactionId ?? "");
 
   const handleDialogOpen = () => {
     const t = data;
@@ -32,30 +59,18 @@ const EditButton = () => {
     }
     dispatch(updateTransactionFormState({ transaction: t }));
 
-    setDialogOpen(true);
-  };
-
-  const handleOnClose = () => {
-    dispatch(nextTransaction("saved"));
-    setDialogOpen(false);
+    onClick();
   };
 
   return (
-    <>
-      {savedTransactionId
-        ? (
-          <LoadingButton
-            sx={{ padding: 0 }}
-            color="secondary"
-            onClick={() => handleDialogOpen()}
-            loading={isLoading}
-          >
-            Edit
-          </LoadingButton>
-        ) : <span />}
-      <SaveDialog open={dialogOpen} onClose={handleOnClose} />
-    </>
+    <LoadingButton
+      sx={{ padding: 0 }}
+      color="secondary"
+      onClick={() => handleDialogOpen()}
+      loading={isLoading}
+    >
+      Edit
+    </LoadingButton>
+
   );
 };
-
-export default EditButton;

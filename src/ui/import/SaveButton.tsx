@@ -33,11 +33,6 @@ const SaveButton = () => {
     setDialogOpen(true);
   };
 
-  const handleOnClose = () => {
-    dispatch(nextTransaction("saved"));
-    setDialogOpen(false);
-  };
-
   return (
     <>
       <Button
@@ -48,7 +43,11 @@ const SaveButton = () => {
       >
         Save
       </Button>
-      <SaveDialog open={dialogOpen} onClose={handleOnClose} />
+      <SaveDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onTransactionSaved={() => dispatch(nextTransaction("saved"))}
+      />
     </>
   );
 };
