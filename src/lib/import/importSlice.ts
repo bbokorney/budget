@@ -35,7 +35,12 @@ const initialState: ImportTransactionsState = {
 
 type UpdateTransactionSavedIdArgs = {
   index: number;
-  id: string;
+  id: string | undefined;
+}
+
+type UpdateTransactionActionTakenArgs = {
+  index: number;
+  actionTaken: TransactionToImport["actionTaken"]
 }
 
 export const importTransactionsSlice = createSlice({
@@ -58,6 +63,11 @@ export const importTransactionsSlice = createSlice({
     updateTransactionSavedId:
     (state, action: PayloadAction<UpdateTransactionSavedIdArgs>) => {
       state.transactionsToImport[action.payload.index].savedTransactionId = action.payload.id;
+    },
+
+    updateTransactionActionTaken:
+    (state, action: PayloadAction<UpdateTransactionActionTakenArgs>) => {
+      state.transactionsToImport[action.payload.index].actionTaken = action.payload.actionTaken;
     },
 
     updateImportTransactionsState:
@@ -122,6 +132,33 @@ export const importCurrentTransaction = createAsyncThunk(
   },
 );
 
+export type DeleteImportedTransactionArgs = {
+  transactionId: string |undefined;
+  fixedCacheKey: string;
+  index: number;
+}
+
+export const deleteImportedTransaction = createAsyncThunk(
+  "import/importCurrentTransaction",
+  async (args: DeleteImportedTransactionArgs, thunkApi) => {
+    const { index, transactionId, fixedCacheKey } = args;
+    if (!transactionId) {
+      return;
+    }
+    const result = thunkApi.dispatch(
+      budgetApi.endpoints.deleteTransaction.initiate(
+        { id: transactionId },
+        { fixedCacheKey },
+      ),
+    );
+
+    await result.unwrap();
+    result.reset();
+    thunkApi.dispatch(updateTransactionSavedId({ index, id: undefined }));
+    thunkApi.dispatch(updateTransactionActionTaken({ index, actionTaken: undefined }));
+  },
+);
+
 export const {
   updateImportTransactionsState,
   updateTransactionsToImport,
@@ -130,6 +167,7 @@ export const {
   previousTransaction,
   clearImportTransactionsState,
   updateTransactionSavedId,
+  updateTransactionActionTaken,
 } = importTransactionsSlice.actions;
 
 export const selectImportTransactions = (state: RootState) => state.importTransactions;
