@@ -39,6 +39,7 @@ const SaveButton = () => {
         variant="contained"
         color="secondary"
         onClick={handleDialogOpen}
+        disabled={!currentTransaction}
         endIcon={<Save />}
       >
         Save

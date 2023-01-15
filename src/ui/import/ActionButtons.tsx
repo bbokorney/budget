@@ -37,7 +37,7 @@ const ActionButtons = () => {
         endIcon={<ArrowForward />}
         disabled={!transaction}
       >
-        {transaction?.actionTaken === "skipped" ? "Next" : "Skip"}
+        Next
       </Button>
     </Stack>
   );
