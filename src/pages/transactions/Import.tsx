@@ -28,7 +28,7 @@ const TransactionsImport = () => {
   }
 
   return (
-    <Stack spacing={1} sx={{ mt: 1 }}>
+    <Stack spacing={1} sx={{ mt: 1, mb: 2 }}>
       <Stack direction="row" justifyContent="space-around">
         <Typography variant="h6">
           Import transactions

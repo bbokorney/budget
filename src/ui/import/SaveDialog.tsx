@@ -38,6 +38,7 @@ const SaveDialog: React.FC<SaveDialogProps> = ({ open, onClose, onTransactionSav
     <Dialog
       open={open}
       onClose={handleDialogClose}
+      fullWidth
     >
       <DialogTitle>
         Save transaction

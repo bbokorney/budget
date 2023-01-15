@@ -13,30 +13,36 @@ type TransactionViewProps = {
 
 const TransactionView: React.FC<TransactionViewProps> = ({
   sourceFile, transaction,
-}) => (
-  <>
-    <Stack direction="row">
-      {sourceFile
+}) => {
+  let amount = transaction.amount ?? 0;
+  if (amount < 0) {
+    amount *= -1;
+  }
+  return (
+    <>
+      <Stack direction="row">
+        {sourceFile
       && (
       <Typography>
         From <Typography sx={{ fontFamily: "monospace" }} component="span">{sourceFile}</Typography>
       </Typography>
       )}
-    </Stack>
-    <Stack direction="row" spacing={1}>
-      <Typography>
-        {formatDate(transaction.date)}
-      </Typography>
-      <Typography sx={{ fontWeight: "bold" }}>
-        {formatCurrency(-1 * (transaction.amount ?? 0))}
-      </Typography>
-    </Stack>
-    <Stack direction="row" spacing={1}>
-      <Typography>
-        {transaction.vendor}
-      </Typography>
-    </Stack>
-  </>
-);
+      </Stack>
+      <Stack direction="row" spacing={1}>
+        <Typography>
+          {formatDate(transaction.date)}
+        </Typography>
+        <Typography sx={{ fontWeight: "bold" }}>
+          {formatCurrency(amount)}
+        </Typography>
+      </Stack>
+      <Stack direction="row" spacing={1}>
+        <Typography>
+          {transaction.vendor}
+        </Typography>
+      </Stack>
+    </>
+  );
+};
 
 export default TransactionView;

@@ -37,7 +37,7 @@ const ImportTransaction = () => {
 
       <Divider />
 
-      {similarTransactions.map((t) => <TransactionView transaction={t} />)}
+      {similarTransactions.map((t) => <TransactionView key={t.id} transaction={t} />)}
 
       {currentTransaction && similarTransactions.length === 0
       && <Typography>No similar transactions</Typography>}
