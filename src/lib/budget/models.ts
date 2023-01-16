@@ -14,9 +14,17 @@ export interface Category {
   name?: string;
 }
 
+export type SkipAction = {
+  action: "skip";
+};
+
+export type AssignCategoryAction = {
+  action: "assignCategory";
+  categoryName: string;
+};
+
 export interface ImportAutoActionRule {
   id?: string;
   filter?: string;
-  actionType?: "skip" | "assignCategory";
-  actionArgs?: Record<string, string>
+  action?: SkipAction | AssignCategoryAction;
 }

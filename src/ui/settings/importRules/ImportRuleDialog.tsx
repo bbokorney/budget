@@ -10,7 +10,7 @@ import { ImportAutoActionRule } from "../../../lib/budget/models";
 import FormSelect from "../../form/FormSelect";
 import { selectOptionsFromCategories, optionFromCategoryName } from "../../form/categoriesSelect";
 import {
-  selectImportRuleForm, updateImportRuleFormState, clearImportRuleFormState,
+  selectImportRuleForm, updateImportRuleFormState,
 } from "../../../lib/import/importRuleSlice";
 import { useAppSelector, useAppDispatch } from "../../../lib/store/hooks";
 
@@ -36,7 +36,6 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
   const categoryOptions = selectOptionsFromCategories(categories);
 
   const onDialogClose = () => {
-    clearImportRuleFormState();
     onClose();
   };
 
@@ -45,18 +44,15 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
   };
 
   const updateRule = (r: ImportAutoActionRule) => {
-    if (r.actionType === "skip") {
-      r.actionArgs = {};
-    }
     dispatch(updateImportRuleFormState({ rule: r }));
     setSaveButtonEnabled(isRuleValid(r));
   };
 
   const isRuleValid = (r: ImportAutoActionRule) => {
-    if (!r.filter || !r.actionType) {
+    if (!r.filter || !r.action) {
       return false;
     }
-    if (r.actionType === "assignCategory" && !r.actionArgs?.categoryName) {
+    if (r.action.action === "assignCategory" && !r.action?.categoryName) {
       return false;
     }
     return true;
@@ -109,9 +105,15 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
             <InputLabel>Action type</InputLabel>
             <Select
               label="Action type"
-              value={rule.actionType ?? ""}
+              value={rule.action?.action ?? ""}
               onChange={(e) => {
-                updateRule({ ...rule, actionType: e.target.value as ImportAutoActionRule["actionType"] });
+                const val = e.target.value;
+                if (val === "skip") {
+                  updateRule({ ...rule, action: { action: "skip" } });
+                }
+                if (val === "assignCategory") {
+                  updateRule({ ...rule, action: { action: "assignCategory", categoryName: "" } });
+                }
               }}
             >
               <MenuItem value="skip">Skip</MenuItem>
@@ -119,15 +121,18 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
             </Select>
           </FormControl>
 
-          {rule.actionType === "assignCategory"
+          {rule.action?.action === "assignCategory"
           && (
           <FormControl sx={formControlSx}>
             <FormSelect
               label="Category"
               options={categoryOptions ?? []}
-              initialValue={optionFromCategoryName(rule.actionArgs?.categoryName, categoryOptions)}
+              initialValue={optionFromCategoryName(rule.action?.categoryName, categoryOptions)}
               onChange={(option) => {
-                updateRule({ ...rule, actionArgs: { categoryName: option?.value ?? "" } });
+                updateRule({
+                  ...rule,
+                  action: { action: "assignCategory", categoryName: option?.value ?? "" },
+                });
               }}
             />
           </FormControl>

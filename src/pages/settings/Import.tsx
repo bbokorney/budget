@@ -7,7 +7,7 @@ import { Add, Edit } from "@mui/icons-material";
 import { useListImportAutoActionRulesQuery } from "../../lib/budget/budgetAPI";
 import ImportRuleDialog
   from "../../ui/settings/importRules/ImportRuleDialog";
-import { updateImportRuleFormState } from "../../lib/import/importRuleSlice";
+import { updateImportRuleFormState, clearImportRuleFormState } from "../../lib/import/importRuleSlice";
 import { useAppDispatch } from "../../lib/store/hooks";
 import DeleteRuleDialog from "../../ui/settings/importRules/DeleteRuleDialog";
 
@@ -79,9 +79,9 @@ const Import = () => {
                 >
                   <Stack justifyContent="space-between" direction="row" sx={{ width: "100%" }}>
                     <ListItemText>Filter: {r.filter}</ListItemText>
-                    <ListItemText>Action: {r.actionType}</ListItemText>
-                    {r.actionType === "assignCategory"
-                  && <ListItemText>{r.actionArgs?.categoryName}</ListItemText>}
+                    <ListItemText>Action: {r.action?.action}</ListItemText>
+                    {r.action?.action === "assignCategory"
+                  && <ListItemText>{r.action?.categoryName}</ListItemText>}
                   </Stack>
                 </ListItem>
               ))}
@@ -91,8 +91,14 @@ const Import = () => {
       )}
       <ImportRuleDialog
         open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        onRuleSaved={() => setOpenDialog(false)}
+        onClose={() => {
+          dispatch(clearImportRuleFormState());
+          setOpenDialog(false);
+        }}
+        onRuleSaved={() => {
+          dispatch(clearImportRuleFormState());
+          setOpenDialog(false);
+        }}
       />
     </Stack>
   );
