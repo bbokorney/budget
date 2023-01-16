@@ -3,11 +3,13 @@ import {
   CircularProgress, List, ListItem, ListItemText, Stack, Typography, Button, Divider,
   IconButton,
 } from "@mui/material";
-import { Add, Edit, Delete } from "@mui/icons-material";
+import { Add, Edit } from "@mui/icons-material";
 import { useListImportAutoActionRulesQuery } from "../../lib/budget/budgetAPI";
-import ImportRuleDialog from "./ImportRuleDialog";
+import ImportRuleDialog
+  from "../../ui/settings/importRules/ImportRuleDialog";
 import { updateImportRuleFormState } from "../../lib/import/importRuleSlice";
 import { useAppDispatch } from "../../lib/store/hooks";
+import DeleteRuleDialog from "../../ui/settings/importRules/DeleteRuleDialog";
 
 const Import = () => {
   const dispatch = useAppDispatch();
@@ -69,9 +71,9 @@ const Import = () => {
                       >
                         <Edit />
                       </IconButton>
-                      <IconButton edge="end">
-                        <Delete />
-                      </IconButton>
+
+                      <DeleteRuleDialog id={r.id ?? ""} />
+
                     </Stack>
                   )}
                 >

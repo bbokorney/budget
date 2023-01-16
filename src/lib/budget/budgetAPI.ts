@@ -88,6 +88,13 @@ export const budgetApi = createApi({
       },
       invalidatesTags: ["ImportAutoActionRules"],
     }),
+
+    deleteImportAutoActionRule: builder.mutation<ImportAutoActionRule, ImportAutoActionRule>({
+      async queryFn(r) {
+        return { data: await api.deleteImportAutoActionRule(r) };
+      },
+      invalidatesTags: ["ImportAutoActionRules"],
+    }),
   }),
 });
 
@@ -101,4 +108,5 @@ export const {
   useUpsertCategoryMutation,
   useListImportAutoActionRulesQuery,
   useUpsertImportAutoActionRuleMutation,
+  useDeleteImportAutoActionRuleMutation,
 } = budgetApi;

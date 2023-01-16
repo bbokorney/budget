@@ -5,14 +5,14 @@ import {
   MenuItem, InputLabel,
 } from "@mui/material";
 import { Check } from "@mui/icons-material";
-import { useListCategoriesQuery, useUpsertImportAutoActionRuleMutation } from "../../lib/budget/budgetAPI";
-import { ImportAutoActionRule } from "../../lib/budget/models";
-import FormSelect from "../../ui/form/FormSelect";
-import { selectOptionsFromCategories, optionFromCategoryName } from "../../ui/form/categoriesSelect";
+import { useListCategoriesQuery, useUpsertImportAutoActionRuleMutation } from "../../../lib/budget/budgetAPI";
+import { ImportAutoActionRule } from "../../../lib/budget/models";
+import FormSelect from "../../form/FormSelect";
+import { selectOptionsFromCategories, optionFromCategoryName } from "../../form/categoriesSelect";
 import {
   selectImportRuleForm, updateImportRuleFormState, clearImportRuleFormState,
-} from "../../lib/import/importRuleSlice";
-import { useAppSelector, useAppDispatch } from "../../lib/store/hooks";
+} from "../../../lib/import/importRuleSlice";
+import { useAppSelector, useAppDispatch } from "../../../lib/store/hooks";
 
 type ImportRuleDialogProps = {
   open: boolean;

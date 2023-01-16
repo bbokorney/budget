@@ -127,4 +127,9 @@ export default class BudgetFirebaseAPI {
       ...r,
     };
   };
+
+  deleteImportAutoActionRule = async (r: ImportAutoActionRule): Promise<ImportAutoActionRule> => {
+    await deleteDoc(this.importAutoActionRuleDocReference(r));
+    return r;
+  };
 }
