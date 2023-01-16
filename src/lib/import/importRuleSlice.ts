@@ -4,6 +4,7 @@ import { ImportAutoActionRule } from "../budget/models";
 
 export interface ImportRuleFormState {
   rule: ImportAutoActionRule,
+  formActionType?: "Edit" | "Add",
 }
 
 const initialState: ImportRuleFormState = {

@@ -13,7 +13,7 @@ import FormSelect from "./FormSelect";
 import FormTextField from "./FormTextInput";
 import CurrencyTextInput from "./CurrencyTextInput";
 import FormDatePicker from "./FormDatePicker";
-import selectOptionsFromCategories from "./categoriesSelect";
+import { selectOptionsFromCategories, optionFromCategoryName } from "./categoriesSelect";
 
 type TransactionFormProps = {
   upsertCacheKey?: string;
@@ -36,12 +36,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
   const { data: categories, isLoading: isCategoriesLoading } = useListCategoriesQuery();
   const categoryOptions = selectOptionsFromCategories(categories);
-  const optionFromCategoryName = (name?: string) => {
-    if (!name) {
-      return null;
-    }
-    return categoryOptions?.find((option) => name === option?.value);
-  };
 
   const [
     // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
@@ -115,7 +109,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         <FormControl sx={formControlSx}>
           <FormSelect
             label="Category"
-            initialValue={optionFromCategoryName(transaction.category)}
+            initialValue={optionFromCategoryName(transaction.category, categoryOptions)}
             options={categoryOptions ?? []}
             onChange={(option) => {
               updateTransaction({ ...transaction, category: option?.value ?? "" });

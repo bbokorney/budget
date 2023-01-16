@@ -8,8 +8,10 @@ import { Check } from "@mui/icons-material";
 import { useListCategoriesQuery, useUpsertImportAutoActionRuleMutation } from "../../lib/budget/budgetAPI";
 import { ImportAutoActionRule } from "../../lib/budget/models";
 import FormSelect from "../../ui/form/FormSelect";
-import selectOptionsFromCategories from "../../ui/form/categoriesSelect";
-import { selectImportRuleForm, updateImportRuleFormState } from "../../lib/import/importRuleSlice";
+import { selectOptionsFromCategories, optionFromCategoryName } from "../../ui/form/categoriesSelect";
+import {
+  selectImportRuleForm, updateImportRuleFormState, clearImportRuleFormState,
+} from "../../lib/import/importRuleSlice";
 import { useAppSelector, useAppDispatch } from "../../lib/store/hooks";
 
 type ImportRuleDialogProps = {
@@ -21,7 +23,7 @@ type ImportRuleDialogProps = {
 const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRuleSaved }) => {
   const dispatch = useAppDispatch();
   const [saveButtonEnabled, setSaveButtonEnabled] = useState(false);
-  const { rule } = useAppSelector(selectImportRuleForm);
+  const { rule, formActionType } = useAppSelector(selectImportRuleForm);
 
   const [
     upsertRule,
@@ -32,6 +34,11 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
 
   const { data: categories, isLoading: isCategoriesLoading } = useListCategoriesQuery();
   const categoryOptions = selectOptionsFromCategories(categories);
+
+  const onDialogClose = () => {
+    clearImportRuleFormState();
+    onClose();
+  };
 
   const onSaveButtonClicked = () => {
     upsertRule(rule);
@@ -71,12 +78,12 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={onDialogClose}
       fullWidth
 
     >
       <DialogTitle>
-        Add import action rule
+        {formActionType ?? "Add"} import action rule
       </DialogTitle>
       <DialogContent sx={{ minHeight: "500px" }}>
         <Backdrop
@@ -118,6 +125,7 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
             <FormSelect
               label="Category"
               options={categoryOptions ?? []}
+              initialValue={optionFromCategoryName(rule.actionArgs?.categoryName, categoryOptions)}
               onChange={(option) => {
                 updateRule({ ...rule, actionArgs: { categoryName: option?.value ?? "" } });
               }}
@@ -127,7 +135,7 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onDialogClose}>Cancel</Button>
         <Button variant="contained" onClick={onSaveButtonClicked} autoFocus disabled={!saveButtonEnabled}>
           Save
         </Button>

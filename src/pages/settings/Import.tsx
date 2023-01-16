@@ -1,12 +1,16 @@
 import { useState } from "react";
 import {
   CircularProgress, List, ListItem, ListItemText, Stack, Typography, Button, Divider,
+  IconButton,
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import { Add, Edit, Delete } from "@mui/icons-material";
 import { useListImportAutoActionRulesQuery } from "../../lib/budget/budgetAPI";
 import ImportRuleDialog from "./ImportRuleDialog";
+import { updateImportRuleFormState } from "../../lib/import/importRuleSlice";
+import { useAppDispatch } from "../../lib/store/hooks";
 
 const Import = () => {
+  const dispatch = useAppDispatch();
   const [openDialog, setOpenDialog] = useState(false);
 
   const onAddButtonClicked = () => {
@@ -52,7 +56,25 @@ const Import = () => {
           <List>
             {rules && rules
               .map((r) => (
-                <ListItem key={r.id}>
+                <ListItem
+                  key={r.id}
+                  secondaryAction={(
+                    <Stack direction="row" spacing={1}>
+                      <IconButton
+                        edge="end"
+                        onClick={() => {
+                          dispatch(updateImportRuleFormState({ rule: r, formActionType: "Edit" }));
+                          setOpenDialog(true);
+                        }}
+                      >
+                        <Edit />
+                      </IconButton>
+                      <IconButton edge="end">
+                        <Delete />
+                      </IconButton>
+                    </Stack>
+                  )}
+                >
                   <Stack justifyContent="space-between" direction="row" sx={{ width: "100%" }}>
                     <ListItemText>Filter: {r.filter}</ListItemText>
                     <ListItemText>Action: {r.actionType}</ListItemText>

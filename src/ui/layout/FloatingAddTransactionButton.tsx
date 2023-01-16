@@ -1,9 +1,11 @@
 import { Fab } from "@mui/material";
 import { Add } from "@mui/icons-material";
+import { useLocation } from "react-router-dom";
 import { useAppDispatch } from "../../lib/store/hooks";
 import { updateFormDialogState } from "../../lib/formDialog/formDialogSlice";
 
 const FloatingAddTransactionButton = () => {
+  const location = useLocation();
   const dispatch = useAppDispatch();
 
   const handleClick = () => {
@@ -16,6 +18,7 @@ const FloatingAddTransactionButton = () => {
       aria-label="add"
       onClick={handleClick}
       sx={{
+        display: location.pathname.startsWith("/settings") ? "none" : "",
         position: "fixed",
         bottom: "86px",
         right: "15px",
