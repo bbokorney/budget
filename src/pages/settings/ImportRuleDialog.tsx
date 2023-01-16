@@ -64,11 +64,12 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
       open={open}
       onClose={onClose}
       fullWidth
+
     >
       <DialogTitle>
         Add import action rule
       </DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ minHeight: "500px" }}>
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={backdropOpen}

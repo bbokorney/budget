@@ -26,7 +26,7 @@ const Import = () => {
       </Stack>
 
       {rules && (
-        <Stack sx={{ pt: 1, width: "100%", maxWidth: 360 }}>
+        <Stack sx={{ pt: 1, width: "100%", maxWidth: "1000px" }}>
 
           <Divider sx={{ mt: 1, mb: 2 }} />
 
@@ -53,7 +53,12 @@ const Import = () => {
             {rules && rules
               .map((r) => (
                 <ListItem key={r.id}>
-                  <ListItemText>{r.actionType}</ListItemText>
+                  <Stack justifyContent="space-between" direction="row" sx={{ width: "100%" }}>
+                    <ListItemText>Filter: {r.filter}</ListItemText>
+                    <ListItemText>Action: {r.actionType}</ListItemText>
+                    {r.actionType === "assignCategory"
+                  && <ListItemText>{r.actionArgs?.categoryName}</ListItemText>}
+                  </Stack>
                 </ListItem>
               ))}
           </List>
