@@ -13,6 +13,7 @@ import FormSelect from "./FormSelect";
 import FormTextField from "./FormTextInput";
 import CurrencyTextInput from "./CurrencyTextInput";
 import FormDatePicker from "./FormDatePicker";
+import selectOptionsFromCategories from "./categoriesSelect";
 
 type TransactionFormProps = {
   upsertCacheKey?: string;
@@ -34,9 +35,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const { transaction } = useAppSelector(selectTransactionForm);
 
   const { data: categories, isLoading: isCategoriesLoading } = useListCategoriesQuery();
-  const categoryOptions = categories?.map(
-    (c) => ({ id: c.id ?? "", value: c.name ?? "", displayValue: c.name ?? "" }),
-  );
+  const categoryOptions = selectOptionsFromCategories(categories);
   const optionFromCategoryName = (name?: string) => {
     if (!name) {
       return null;

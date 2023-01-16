@@ -31,6 +31,20 @@ const Settings = () => {
             <ListItemText primary="Categories" />
           </ListItemButton>
         </ListItem>
+
+        <ListItem
+          key="import"
+          disablePadding
+          secondaryAction={(
+            <IconButton edge="end">
+              <ArrowForward />
+            </IconButton>
+            )}
+        >
+          <ListItemButton onClick={() => navigate("/settings/import")}>
+            <ListItemText primary="Import" />
+          </ListItemButton>
+        </ListItem>
       </List>
     </>
   );

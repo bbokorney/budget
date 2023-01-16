@@ -3,7 +3,7 @@ import {
   QueryDocumentSnapshot, Firestore, query, orderBy,
   setDoc, doc, deleteDoc, limit, where, QueryConstraint, getDoc,
 } from "firebase/firestore";
-import { Transaction, Category } from "./models";
+import { Transaction, Category, ImportAutoActionRule } from "./models";
 import getDB from "./firebase";
 
 export default class BudgetFirebaseAPI {
@@ -12,6 +12,9 @@ export default class BudgetFirebaseAPI {
 
   categoriesCollectionName = process.env.REACT_APP_CATEGORIES_COLLECTION_NAME
      ?? "budget-categories";
+
+  importAutoActionRuleCollectionName = process.env.REACT_APP_IMPORT_RULES_COLLECTION_NAME
+     ?? "budget-importAutoActionRules";
 
   db: Firestore = getDB();
 
@@ -27,6 +30,13 @@ export default class BudgetFirebaseAPI {
       throw new Error("Category has no ID");
     }
     return doc(this.db, this.categoriesCollectionName, c.id);
+  };
+
+  importAutoActionRuleDocReference = (r: ImportAutoActionRule) => {
+    if (!r.id) {
+      throw new Error("Import auto action rule has no ID");
+    }
+    return doc(this.db, this.importAutoActionRuleCollectionName, r.id);
   };
 
   listTransactionsWithConstraints = async (...constraints: QueryConstraint[]): Promise<Transaction[]> => {
@@ -95,6 +105,26 @@ export default class BudgetFirebaseAPI {
     return {
       id: docRef.id,
       ...c,
+    };
+  };
+
+  listImportAutoActionRules = async (): Promise<ImportAutoActionRule[]> => {
+    const collectionRef = collection(this.db, this.importAutoActionRuleCollectionName);
+    const q = query(collectionRef);
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs
+      .map((snapshot: QueryDocumentSnapshot) => ({ id: snapshot.id, ...snapshot.data() }));
+  };
+
+  upsertImportAutoActionRule = async (r: ImportAutoActionRule): Promise<ImportAutoActionRule> => {
+    if (r.id) {
+      await setDoc(this.importAutoActionRuleDocReference(r), r);
+      return r;
+    }
+    const docRef = await addDoc(collection(this.db, this.importAutoActionRuleCollectionName), r);
+    return {
+      id: docRef.id,
+      ...r,
     };
   };
 }

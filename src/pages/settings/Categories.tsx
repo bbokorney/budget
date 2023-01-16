@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-  CircularProgress, List, ListItem, ListItemText, Stack, TextField,
+  CircularProgress, List, ListItem, ListItemText, Stack, TextField, Typography,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Save } from "@mui/icons-material";
@@ -48,13 +48,17 @@ const Categories = () => {
   }, [isUpsertSuccess]);
 
   return (
-    <Stack sx={{ pt: 2 }}>
+    <Stack>
+      <Typography variant="h6">
+        Categories
+      </Typography>
+
       <Stack alignItems="center">
         {isLoading && <CircularProgress /> }
       </Stack>
 
       {categories && (
-        <Stack sx={{ width: "100%", maxWidth: 360 }}>
+        <Stack sx={{ pt: 1, width: "100%", maxWidth: 360 }}>
 
           <Stack direction="row" spacing={1} justifyContent="space-between">
 
