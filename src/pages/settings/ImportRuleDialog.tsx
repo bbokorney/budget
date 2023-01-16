@@ -9,6 +9,8 @@ import { useListCategoriesQuery, useUpsertImportAutoActionRuleMutation } from ".
 import { ImportAutoActionRule } from "../../lib/budget/models";
 import FormSelect from "../../ui/form/FormSelect";
 import selectOptionsFromCategories from "../../ui/form/categoriesSelect";
+import { selectImportRuleForm, updateImportRuleFormState } from "../../lib/import/importRuleSlice";
+import { useAppSelector, useAppDispatch } from "../../lib/store/hooks";
 
 type ImportRuleDialogProps = {
   open: boolean;
@@ -17,10 +19,9 @@ type ImportRuleDialogProps = {
 }
 
 const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRuleSaved }) => {
+  const dispatch = useAppDispatch();
   const [saveButtonEnabled, setSaveButtonEnabled] = useState(false);
-  const [filter, setFilter] = useState("");
-  const [actionType, setActionType] = useState<ImportAutoActionRule["actionType"] | string>("");
-  const [actionArgs, setActionArgs] = useState<Record<string, string>>({});
+  const { rule } = useAppSelector(selectImportRuleForm);
 
   const [
     upsertRule,
@@ -33,7 +34,12 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
   const categoryOptions = selectOptionsFromCategories(categories);
 
   const onSaveButtonClicked = () => {
-    upsertRule({ filter, actionType: actionType as ImportAutoActionRule["actionType"], actionArgs });
+    upsertRule(rule);
+  };
+
+  const updateRule = (r: ImportAutoActionRule) => {
+    dispatch(updateImportRuleFormState({ rule: r }));
+    setSaveButtonEnabled(isRuleValid(r));
   };
 
   const isRuleValid = (r: ImportAutoActionRule) => {
@@ -84,19 +90,8 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
           <FormControl sx={formControlSx}>
             <TextField
               label="Match filter"
-              onChange={(e) => {
-                const newFilter = e.target.value;
-                setFilter(newFilter);
-                setSaveButtonEnabled(
-                  isRuleValid(
-                    {
-                      filter: newFilter,
-                      actionType: actionType as ImportAutoActionRule["actionType"],
-                      actionArgs,
-                    },
-                  ),
-                );
-              }}
+              value={rule.filter}
+              onChange={(e) => { updateRule({ ...rule, filter: e.target.value }); }}
             />
           </FormControl>
 
@@ -104,18 +99,9 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
             <InputLabel>Action type</InputLabel>
             <Select
               label="Action type"
-              value={actionType}
+              value={rule.actionType}
               onChange={(e) => {
-                const a = e.target.value as ImportAutoActionRule["actionType"];
-                setActionType(a);
-                if (a === "skip") {
-                  setActionArgs({});
-                }
-                setSaveButtonEnabled(
-                  isRuleValid(
-                    { filter, actionType: a, actionArgs },
-                  ),
-                );
+                updateRule({ ...rule, actionType: e.target.value as ImportAutoActionRule["actionType"] });
               }}
             >
               <MenuItem value="skip">Skip</MenuItem>
@@ -123,24 +109,14 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
             </Select>
           </FormControl>
 
-          {actionType === "assignCategory"
+          {rule.actionType === "assignCategory"
           && (
           <FormControl sx={formControlSx}>
             <FormSelect
               label="Category"
               options={categoryOptions ?? []}
               onChange={(option) => {
-                const newArgs = { categoryName: option?.value ?? "" };
-                setActionArgs(newArgs);
-                setSaveButtonEnabled(
-                  isRuleValid(
-                    {
-                      filter,
-                      actionType: actionType as ImportAutoActionRule["actionType"],
-                      actionArgs: newArgs,
-                    },
-                  ),
-                );
+                updateRule({ ...rule, actionArgs: { categoryName: option?.value ?? "" } });
               }}
             />
           </FormControl>
