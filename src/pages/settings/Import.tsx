@@ -78,10 +78,27 @@ const Import = () => {
                   )}
                 >
                   <Stack justifyContent="space-between" direction="row" sx={{ width: "100%" }}>
-                    <ListItemText>Filter: {r.filter}</ListItemText>
-                    <ListItemText>Action: {r.action?.action}</ListItemText>
+                    <ListItemText>If transaction matches&nbsp;
+                      <Typography
+                        sx={{ fontWeight: "bold" }}
+                        component="span"
+                      >{r.filter}
+                      </Typography>
+                    </ListItemText>
+
+                    {r.action?.action === "skip"
+                    && <ListItemText>Skip transaction</ListItemText>}
+
                     {r.action?.action === "assignCategory"
-                  && <ListItemText>{r.action?.categoryName}</ListItemText>}
+                  && (
+                  <ListItemText>Assign category&nbsp;
+                    <Typography
+                      sx={{ fontWeight: "bold" }}
+                      component="span"
+                    >{r.action?.categoryName}
+                    </Typography>
+                  </ListItemText>
+                  )}
                   </Stack>
                 </ListItem>
               ))}
