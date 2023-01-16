@@ -38,6 +38,9 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
   };
 
   const updateRule = (r: ImportAutoActionRule) => {
+    if (r.actionType === "skip") {
+      r.actionArgs = {};
+    }
     dispatch(updateImportRuleFormState({ rule: r }));
     setSaveButtonEnabled(isRuleValid(r));
   };
@@ -90,7 +93,7 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
           <FormControl sx={formControlSx}>
             <TextField
               label="Match filter"
-              value={rule.filter}
+              value={rule.filter ?? ""}
               onChange={(e) => { updateRule({ ...rule, filter: e.target.value }); }}
             />
           </FormControl>
@@ -99,7 +102,7 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
             <InputLabel>Action type</InputLabel>
             <Select
               label="Action type"
-              value={rule.actionType}
+              value={rule.actionType ?? ""}
               onChange={(e) => {
                 updateRule({ ...rule, actionType: e.target.value as ImportAutoActionRule["actionType"] });
               }}
