@@ -12,11 +12,11 @@ import TransactionView from "./TransactionView";
 
 const ActionTakenAlert = () => {
   const currentTransaction = useAppSelector(selectCurrentImportTransaction);
+  const alreadyImportedTransaction = useAppSelector(selectAlreadyImportedTransaction);
+  console.log("currentTransaction", currentTransaction);
   if (!currentTransaction) {
     return <div />;
   }
-
-  const alreadyImportedTransaction = useAppSelector(selectAlreadyImportedTransaction);
 
   if (currentTransaction.actionTaken === "saved"
     || currentTransaction.actionTaken === "skipped"
@@ -25,9 +25,12 @@ const ActionTakenAlert = () => {
     if (currentTransaction.savedTransactionId || alreadyImportedTransaction) {
       actionTaken = "saved";
     }
-    let transactionToShow;
+    let transactionToShowId;
     if (alreadyImportedTransaction) {
-      transactionToShow = alreadyImportedTransaction;
+      transactionToShowId = alreadyImportedTransaction.id;
+    }
+    if (currentTransaction.savedTransactionId) {
+      transactionToShowId = currentTransaction.savedTransactionId;
     }
     return (
       <Alert severity="info">
@@ -42,8 +45,8 @@ const ActionTakenAlert = () => {
             <DeleteButton />
           </Stack>
 
-          {transactionToShow
-          && <TransactionView transaction={transactionToShow} />}
+          {transactionToShowId
+          && <TransactionView transactionId={transactionToShowId} />}
         </Stack>
       </Alert>
     );
