@@ -28,8 +28,9 @@ function parseLines(fileName: string, lines: string[]): TransactionToImport[] {
 }
 
 function parseLine(fileName: string, line: string): TransactionToImport {
+  const importId = line;
   const tokens = lineToArray(line);
-  let transaction: Transaction = {};
+  let transaction: Transaction = { importId };
 
   if (tokens.length === 5 && tokens[3] === "Payment") {
     transaction = {
@@ -39,12 +40,14 @@ function parseLine(fileName: string, line: string): TransactionToImport {
     };
   } else if (tokens.length === 5) {
     transaction = {
+      ...transaction,
       date: Date.parse(tokens[0]),
       amount: parseAmount(tokens[1]),
       vendor: tokens[4],
     };
   } else if (tokens.length === 6) {
     transaction = {
+      ...transaction,
       date: Date.parse(tokens[0]),
       amount: parseAmount(tokens[5]),
       vendor: tokens[2],

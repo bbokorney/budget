@@ -7,6 +7,7 @@ export interface Transaction {
   notes?: string;
   tags?: string[];
   source?: string;
+  importId?: string;
 }
 
 export interface Category {

@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Stack, Typography,
+  Stack, Typography, Divider,
 } from "@mui/material";
 import { Transaction } from "../../lib/budget/models";
 import formatDate from "../../lib/dates/format";
@@ -36,9 +36,12 @@ const TransactionView: React.FC<TransactionViewProps> = ({
           {formatCurrency(amount)}
         </Typography>
       </Stack>
-      <Stack direction="row" spacing={1}>
+      <Stack direction="row" spacing={1} divider={<Divider orientation="vertical" flexItem />}>
         <Typography>
           {transaction.vendor}
+        </Typography>
+        <Typography>
+          {transaction.category}
         </Typography>
       </Stack>
     </>

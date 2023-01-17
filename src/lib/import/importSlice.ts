@@ -95,7 +95,6 @@ export const parseFiles = createAsyncThunk(
   async (files: FileList, thunkApi) => {
     thunkApi.dispatch(updateImportTransactionsState("parsingFiles"));
     const transactionsToImport = await parseTransactions(files);
-    thunkApi.dispatch(updateTransactionsToImport(transactionsToImport));
     thunkApi.dispatch(updateImportTransactionsState("loadingTransactions"));
     if (transactionsToImport.length === 0) {
       thunkApi.dispatch(updateImportTransactionsState("importingTransactions"));
@@ -106,6 +105,14 @@ export const parseFiles = createAsyncThunk(
       addDays(transactionsToImport[transactionsToImport.length - 1].transaction.date ?? 0, dateRange)
         .getTime(),
     );
+    transactionsToImport.forEach((toImport) => {
+      const match = existingTransactions.find((t) => t.importId === toImport.transaction.importId);
+      if (!match) {
+        return;
+      }
+      toImport.savedTransactionId = match.id;
+    });
+    thunkApi.dispatch(updateTransactionsToImport(transactionsToImport));
     thunkApi.dispatch(updateExistingTransactions(existingTransactions));
     thunkApi.dispatch(updateImportTransactionsState("importingTransactions"));
   },
@@ -200,6 +207,16 @@ export const selectSimilarTransactions = (state: RootState, toImport?: Transacti
       const a = t.amount ?? 0;
       return a >= minAmount && a <= maxAmount;
     });
+};
+
+export const selectAlreadyImportedTransaction = (state: RootState) => {
+  const currentTransaction = selectCurrentImportTransaction(state);
+  if (!currentTransaction) {
+    return undefined;
+  }
+
+  return state.importTransactions.existingTransactions
+    .find((t) => t.importId === currentTransaction.transaction.importId);
 };
 
 export default importTransactionsSlice.reducer;
