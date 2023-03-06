@@ -106,6 +106,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             onChange={(value) => updateTransaction({ ...transaction, amount: value })}
           />
         </FormControl>
+        {!isCategoriesLoading
+        && (
         <FormControl sx={formControlSx}>
           <FormSelect
             label="Category"
@@ -116,6 +118,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             }}
           />
         </FormControl>
+        )}
         <FormControl sx={formControlSx}>
           <FormTextField
             label="Vendor"
