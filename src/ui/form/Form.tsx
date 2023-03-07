@@ -58,6 +58,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     }
   }, [isUpsertSuccess]);
 
+  useEffect(() => {
+    updateTransaction(transaction);
+  }, [categories]);
+
   const updateTransaction = (t: Transaction) => {
     if (t.date === undefined || t.date === 0) {
       t = { ...t, date: new Date().getTime() };
