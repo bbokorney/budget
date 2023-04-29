@@ -86,6 +86,9 @@ export const importTransactionsSlice = createSlice({
     builder
       .addCase(parseFiles.rejected, (state, action) => {
         state.error = action.error.message;
+      })
+      .addCase(matchCurrentTransaction.rejected, (state, action) => {
+        state.error = action.error.message;
       });
   },
 });
@@ -141,8 +144,43 @@ export const importCurrentTransaction = createAsyncThunk(
   },
 );
 
+export const matchCurrentTransaction = createAsyncThunk(
+  "import/matchCurrentTransaction",
+  async (args: {transaction: Transaction}, thunkApi) => {
+    const { transactionsIndex } = selectImportTransactions(
+      thunkApi.getState() as RootState,
+    );
+    const currentTransaction = selectCurrentImportTransaction(
+      thunkApi.getState() as RootState,
+    );
+    const updatedTransaction = { ...args.transaction, importId: currentTransaction?.transaction.importId };
+    const result = thunkApi.dispatch(
+      budgetApi.endpoints.upsertTransaction.initiate(
+        updatedTransaction,
+      ),
+    );
+
+    await result.unwrap();
+    thunkApi.dispatch(updateTransactionSavedId({
+      index: transactionsIndex,
+      id: args.transaction.id,
+    }));
+    const { existingTransactions } = (thunkApi.getState() as RootState).importTransactions;
+    const updateIndex = existingTransactions.findIndex((t) => t.id === args.transaction.id);
+    const newExistingTransactions = [
+      ...existingTransactions.slice(0, updateIndex),
+      {
+        ...existingTransactions[updateIndex],
+        importId: currentTransaction?.transaction.importId,
+      },
+      ...existingTransactions.slice(updateIndex + 1),
+    ];
+    thunkApi.dispatch(updateExistingTransactions(newExistingTransactions));
+  },
+);
+
 export type DeleteImportedTransactionArgs = {
-  transactionId: string |undefined;
+  transactionId: string | undefined;
   fixedCacheKey: string;
   index: number;
 }

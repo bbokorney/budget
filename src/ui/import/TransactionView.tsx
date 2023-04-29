@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import {
   Stack, Typography, Divider, CircularProgress,
 } from "@mui/material";
@@ -11,17 +11,22 @@ type TransactionViewProps = {
   sourceFile?: string;
   transaction?: Transaction;
   transactionId?: string;
+  button?: ReactElement;
 }
 
 const TransactionView: React.FC<TransactionViewProps> = ({
-  sourceFile, transaction, transactionId,
+  sourceFile, transaction, transactionId, button,
 }) => (
   <>
     {transactionId && (
       <TransactionFromIdView transactionId={transactionId} sourceFile={sourceFile} />
     )}
     {transaction && (
-      <LoadedTransaction transaction={transaction} sourceFile={sourceFile} />
+      <LoadedTransaction
+        transaction={transaction}
+        sourceFile={sourceFile}
+        button={button}
+      />
     )}
   </>
 );
@@ -31,9 +36,12 @@ export default TransactionView;
 type TransactionFromIdViewProps = {
   transactionId: string;
   sourceFile?: string;
+  button?: ReactElement;
 }
 
-const TransactionFromIdView: React.FC<TransactionFromIdViewProps> = ({ transactionId, sourceFile }) => {
+const TransactionFromIdView: React.FC<TransactionFromIdViewProps> = (
+  { transactionId, sourceFile, button },
+) => {
   const { data, isLoading } = useGetTransactionQuery(transactionId);
   return (
     <>
@@ -47,6 +55,7 @@ const TransactionFromIdView: React.FC<TransactionFromIdViewProps> = ({ transacti
         <LoadedTransaction
           transaction={data}
           sourceFile={sourceFile}
+          button={button}
         />
       )}
     </>
@@ -56,9 +65,10 @@ const TransactionFromIdView: React.FC<TransactionFromIdViewProps> = ({ transacti
 type LoadedTransactionProps = {
   sourceFile?: string;
   transaction: Transaction;
+  button?: ReactElement;
 }
 
-const LoadedTransaction: React.FC<LoadedTransactionProps> = ({ transaction, sourceFile }) => {
+const LoadedTransaction: React.FC<LoadedTransactionProps> = ({ transaction, sourceFile, button }) => {
   let amount = transaction.amount ?? 0;
   if (amount < 0) {
     amount *= -1;
@@ -88,6 +98,7 @@ const LoadedTransaction: React.FC<LoadedTransactionProps> = ({ transaction, sour
         <Typography>
           {transaction.category}
         </Typography>
+        {button && button}
       </Stack>
     </>
   );
