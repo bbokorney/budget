@@ -20,6 +20,7 @@ export interface ImportTransactionsState {
     "parsingFiles" |
     "loadingTransactions" |
     "importingTransactions";
+  hideImported: boolean;
   error?: string;
   transactionsIndex: number;
   transactionsToImport: TransactionToImport[],
@@ -28,6 +29,7 @@ export interface ImportTransactionsState {
 
 const initialState: ImportTransactionsState = {
   state: "selectFiles",
+  hideImported: false,
   transactionsIndex: 0,
   transactionsToImport: [],
   existingTransactions: [],
@@ -48,14 +50,35 @@ export const importTransactionsSlice = createSlice({
   initialState,
   reducers: {
     nextTransaction: (state, action: PayloadAction<TransactionToImport["actionTaken"]>) => {
-      if (state.transactionsIndex < state.transactionsToImport.length) {
-        state.transactionsToImport[state.transactionsIndex].actionTaken = action.payload;
+      console.log(action.payload);
+
+      if (state.transactionsIndex === state.transactionsToImport.length) {
+        return;
+      }
+
+      if (state.hideImported) {
+        const index = state.transactionsToImport
+          .findIndex((t, i) => i > state.transactionsIndex && t.savedTransactionId === undefined);
+        if (index >= 0) {
+          state.transactionsIndex = index;
+        }
+      } else {
         state.transactionsIndex += 1;
       }
     },
 
     previousTransaction: (state) => {
-      if (state.transactionsIndex > 0) {
+      if (state.transactionsIndex === 0) {
+        return;
+      }
+      if (state.hideImported) {
+        for (let i = state.transactionsIndex - 1; i >= 0; i -= 1) {
+          if (state.transactionsToImport[i].savedTransactionId === undefined) {
+            state.transactionsIndex = i;
+            return;
+          }
+        }
+      } else {
         state.transactionsIndex -= 1;
       }
     },
@@ -78,6 +101,20 @@ export const importTransactionsSlice = createSlice({
 
     updateExistingTransactions:
     (state, action: PayloadAction<Transaction[]>) => { state.existingTransactions = action.payload; },
+
+    updateHideImported:
+    (state, action: PayloadAction<boolean>) => {
+      state.hideImported = action.payload;
+      if (action.payload) {
+        const index = state.transactionsToImport
+          .findIndex((t, i) => i > state.transactionsIndex && t.savedTransactionId === undefined);
+        if (index >= 0) {
+          state.transactionsIndex = index;
+        }
+      } else {
+        state.transactionsIndex = 0;
+      }
+    },
 
     clearImportTransactionsState: () => initialState,
   },
@@ -215,6 +252,7 @@ export const {
   clearImportTransactionsState,
   updateTransactionSavedId,
   updateTransactionActionTaken,
+  updateHideImported,
 } = importTransactionsSlice.actions;
 
 export const selectImportTransactions = (state: RootState) => state.importTransactions;
