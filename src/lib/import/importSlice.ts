@@ -98,6 +98,13 @@ export const importTransactionsSlice = createSlice({
     updateExistingTransactions:
     (state, action: PayloadAction<Transaction[]>) => { state.existingTransactions = action.payload; },
 
+    deleteExistingTransaction:
+    (state, action: PayloadAction<{id: string}>) => {
+      const { id } = action.payload;
+      const index = state.existingTransactions.findIndex((t) => t.id === id);
+      state.existingTransactions.splice(index, 1);
+    },
+
     addExistingTransaction:
     (state, action: PayloadAction<Transaction>) => { state.existingTransactions.push(action.payload); },
 
@@ -242,6 +249,7 @@ export const deleteImportedTransaction = createAsyncThunk(
     await result.unwrap();
     result.reset();
     thunkApi.dispatch(updateTransactionSavedId({ index, id: undefined }));
+    thunkApi.dispatch(deleteExistingTransaction({ id: transactionId }));
   },
 );
 
@@ -255,6 +263,7 @@ export const {
   updateTransactionSavedId,
   updateTransactionImportId,
   updateHideImported,
+  deleteExistingTransaction,
   addExistingTransaction,
 } = importTransactionsSlice.actions;
 
