@@ -33,7 +33,7 @@ const ActionButtons = () => {
       <Button
         color="secondary"
         variant="contained"
-        onClick={() => dispatch(nextTransaction("skipped"))}
+        onClick={() => dispatch(nextTransaction())}
         endIcon={<ArrowForward />}
         disabled={!transaction}
       >

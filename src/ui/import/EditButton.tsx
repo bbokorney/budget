@@ -27,7 +27,7 @@ const EditButton = () => {
       <SaveDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
-        onTransactionSaved={() => dispatch(nextTransaction("saved"))}
+        onTransactionSaved={() => dispatch(nextTransaction())}
       />
     </>
   );

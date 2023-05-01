@@ -13,18 +13,13 @@ import TransactionView from "./TransactionView";
 const ActionTakenAlert = () => {
   const currentTransaction = useAppSelector(selectCurrentImportTransaction);
   const alreadyImportedTransaction = useAppSelector(selectAlreadyImportedTransaction);
+  console.log(alreadyImportedTransaction);
 
   if (!currentTransaction) {
     return <div />;
   }
 
-  if (currentTransaction.actionTaken === "saved"
-    || currentTransaction.actionTaken === "skipped"
-    || alreadyImportedTransaction) {
-    let { actionTaken } = currentTransaction;
-    if (currentTransaction.savedTransactionId || alreadyImportedTransaction) {
-      actionTaken = "saved";
-    }
+  if (alreadyImportedTransaction) {
     let transactionToShowId;
     if (alreadyImportedTransaction) {
       transactionToShowId = alreadyImportedTransaction.id;
@@ -37,7 +32,7 @@ const ActionTakenAlert = () => {
         <Stack spacing={1}>
           <Stack direction="row" spacing={1}>
             <Typography>
-              This transaction was already {actionTaken}.
+              This transaction was already saved.
             </Typography>
 
             <EditButton />

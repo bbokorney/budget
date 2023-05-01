@@ -11,7 +11,6 @@ const api = new BudgetFirebaseAPI();
 export type TransactionToImport = {
   sourceFile: string;
   transaction: Transaction;
-  actionTaken?: "saved" | "skipped";
   savedTransactionId?: string;
 }
 
@@ -40,18 +39,11 @@ type UpdateTransactionSavedIdArgs = {
   id: string | undefined;
 }
 
-type UpdateTransactionActionTakenArgs = {
-  index: number;
-  actionTaken: TransactionToImport["actionTaken"]
-}
-
 export const importTransactionsSlice = createSlice({
   name: "importTransactions",
   initialState,
   reducers: {
-    nextTransaction: (state, action: PayloadAction<TransactionToImport["actionTaken"]>) => {
-      console.log(action.payload);
-
+    nextTransaction: (state) => {
       if (state.transactionsIndex === state.transactionsToImport.length) {
         return;
       }
@@ -88,9 +80,13 @@ export const importTransactionsSlice = createSlice({
       state.transactionsToImport[action.payload.index].savedTransactionId = action.payload.id;
     },
 
-    updateTransactionActionTaken:
-    (state, action: PayloadAction<UpdateTransactionActionTakenArgs>) => {
-      state.transactionsToImport[action.payload.index].actionTaken = action.payload.actionTaken;
+    updateTransactionImportId:
+    (state, action: PayloadAction<{transactionId: string, importId: string}>) => {
+      const { transactionId, importId } = action.payload;
+      const index = state.existingTransactions.findIndex((t) => t.id === transactionId);
+      if (index >= 0) {
+        state.existingTransactions[index].importId = importId;
+      }
     },
 
     updateImportTransactionsState:
@@ -101,6 +97,9 @@ export const importTransactionsSlice = createSlice({
 
     updateExistingTransactions:
     (state, action: PayloadAction<Transaction[]>) => { state.existingTransactions = action.payload; },
+
+    addExistingTransaction:
+    (state, action: PayloadAction<Transaction>) => { state.existingTransactions.push(action.payload); },
 
     updateHideImported:
     (state, action: PayloadAction<boolean>) => {
@@ -166,9 +165,9 @@ export type ImportTransactionArgs = {
 export const importCurrentTransaction = createAsyncThunk(
   "import/importCurrentTransaction",
   async (args: ImportTransactionArgs, thunkApi) => {
-    const { transactionsIndex } = selectImportTransactions(
-      thunkApi.getState() as RootState,
-    );
+    const state = thunkApi.getState() as RootState;
+    const currentTransaction = selectCurrentImportTransaction(state);
+    const { transactionsIndex } = selectImportTransactions(state);
     const result = thunkApi.dispatch(
       budgetApi.endpoints.upsertTransaction.initiate(
         args.transaction,
@@ -178,18 +177,22 @@ export const importCurrentTransaction = createAsyncThunk(
 
     const newTransaction = await result.unwrap();
     thunkApi.dispatch(updateTransactionSavedId({ index: transactionsIndex, id: newTransaction.id ?? "" }));
+    thunkApi.dispatch(updateTransactionImportId(
+      {
+        transactionId: newTransaction.id ?? "",
+        importId: currentTransaction?.transaction.importId ?? "",
+      },
+    ));
+    thunkApi.dispatch(addExistingTransaction(newTransaction));
   },
 );
 
 export const matchCurrentTransaction = createAsyncThunk(
   "import/matchCurrentTransaction",
   async (args: {transaction: Transaction}, thunkApi) => {
-    const { transactionsIndex } = selectImportTransactions(
-      thunkApi.getState() as RootState,
-    );
-    const currentTransaction = selectCurrentImportTransaction(
-      thunkApi.getState() as RootState,
-    );
+    const state = thunkApi.getState() as RootState;
+    const { transactionsIndex } = selectImportTransactions(state);
+    const currentTransaction = selectCurrentImportTransaction(state);
     const updatedTransaction = { ...args.transaction, importId: currentTransaction?.transaction.importId };
     const result = thunkApi.dispatch(
       budgetApi.endpoints.upsertTransaction.initiate(
@@ -202,7 +205,7 @@ export const matchCurrentTransaction = createAsyncThunk(
       index: transactionsIndex,
       id: args.transaction.id,
     }));
-    const { existingTransactions } = (thunkApi.getState() as RootState).importTransactions;
+    const { existingTransactions } = state.importTransactions;
     const updateIndex = existingTransactions.findIndex((t) => t.id === args.transaction.id);
     const newExistingTransactions = [
       ...existingTransactions.slice(0, updateIndex),
@@ -239,7 +242,6 @@ export const deleteImportedTransaction = createAsyncThunk(
     await result.unwrap();
     result.reset();
     thunkApi.dispatch(updateTransactionSavedId({ index, id: undefined }));
-    thunkApi.dispatch(updateTransactionActionTaken({ index, actionTaken: undefined }));
   },
 );
 
@@ -251,8 +253,9 @@ export const {
   previousTransaction,
   clearImportTransactionsState,
   updateTransactionSavedId,
-  updateTransactionActionTaken,
+  updateTransactionImportId,
   updateHideImported,
+  addExistingTransaction,
 } = importTransactionsSlice.actions;
 
 export const selectImportTransactions = (state: RootState) => state.importTransactions;
