@@ -13,7 +13,6 @@ import TransactionView from "./TransactionView";
 const ActionTakenAlert = () => {
   const currentTransaction = useAppSelector(selectCurrentImportTransaction);
   const alreadyImportedTransaction = useAppSelector(selectAlreadyImportedTransaction);
-  console.log(alreadyImportedTransaction);
 
   if (!currentTransaction) {
     return <div />;

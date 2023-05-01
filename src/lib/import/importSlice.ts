@@ -288,6 +288,7 @@ export const selectSimilarTransactions = (state: RootState, toImport?: Transacti
       const a = t.amount ?? 0;
       return a >= minAmount && a <= maxAmount;
     })
+    .filter((t) => t.importId === undefined)
     .sort((a, b) => {
       const aDiff = Math.abs(Math.abs(toImport.transaction.amount ?? 0) - Math.abs(a.amount ?? 0));
       const bDiff = Math.abs(Math.abs(toImport.transaction.amount ?? 0) - Math.abs(b.amount ?? 0));
