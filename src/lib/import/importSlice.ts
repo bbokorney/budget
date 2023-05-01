@@ -305,6 +305,14 @@ export const selectSimilarTransactions = (state: RootState, toImport?: Transacti
         return -1;
       }
       return 1;
+    })
+    .sort((a, b) => {
+      const aDiff = Math.abs((toImport.transaction.date ?? 0) - (a.date ?? 0));
+      const bDiff = Math.abs((toImport.transaction.date ?? 0) - (b.date ?? 0));
+      if (aDiff < bDiff) {
+        return -1;
+      }
+      return 1;
     });
 };
 

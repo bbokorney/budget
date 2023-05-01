@@ -5,6 +5,7 @@ import {
   selectCurrentImportTransaction,
   selectSimilarTransactions,
   matchCurrentTransaction,
+  nextTransaction,
 } from "../../lib/import/importSlice";
 import { useAppSelector, useAppDispatch } from "../../lib/store/hooks";
 import ProgressIndicator from "./ProgressIndicator";
@@ -21,6 +22,7 @@ const ImportTransaction = () => {
 
   const matchTransaction = (transaction: Transaction) => {
     dispatch(matchCurrentTransaction({ transaction }));
+    dispatch(nextTransaction());
   };
 
   return (
