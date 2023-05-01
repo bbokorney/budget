@@ -113,7 +113,7 @@ export const importTransactionsSlice = createSlice({
       state.hideImported = action.payload;
       if (action.payload) {
         const index = state.transactionsToImport
-          .findIndex((t, i) => i > state.transactionsIndex && t.savedTransactionId === undefined);
+          .findIndex((t, i) => i >= state.transactionsIndex && t.savedTransactionId === undefined);
         if (index >= 0) {
           state.transactionsIndex = index;
         }
