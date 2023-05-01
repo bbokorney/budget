@@ -117,8 +117,6 @@ export const importTransactionsSlice = createSlice({
         if (index >= 0) {
           state.transactionsIndex = index;
         }
-      } else {
-        state.transactionsIndex = 0;
       }
     },
 
