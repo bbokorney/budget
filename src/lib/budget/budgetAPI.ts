@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { Transaction, Category, ImportAutoActionRule } from "./models";
+import type {
+  Transaction, Category, Tag, ImportAutoActionRule,
+} from "./models";
 import BudgetFirebaseAPI from "./budgetFirebaseAPI";
 import { clearListTransactionsPaginationState } from "./paginationSlice";
 import { getTotalsByCategory, CategoryTotals } from "./calculations";
@@ -9,7 +11,7 @@ const api = new BudgetFirebaseAPI();
 export const budgetApi = createApi({
   reducerPath: "budgetApi",
   baseQuery: fetchBaseQuery({}),
-  tagTypes: ["Transactions", "Categories", "ImportAutoActionRules"],
+  tagTypes: ["Transactions", "Categories", "Tags", "ImportAutoActionRules"],
   endpoints: (builder) => ({
     listTransactions: builder.query<Transaction[], Transaction | undefined>({
       async queryFn(after, queryApi) {
@@ -75,6 +77,20 @@ export const budgetApi = createApi({
       invalidatesTags: ["Categories"],
     }),
 
+    listTags: builder.query<Tag[], void>({
+      async queryFn() {
+        return { data: await api.listTags() };
+      },
+      providesTags: ["Tags"],
+    }),
+
+    upsertTag: builder.mutation<Tag, Tag>({
+      async queryFn(t) {
+        return { data: await api.upsertTag(t) };
+      },
+      invalidatesTags: ["Tags"],
+    }),
+
     listImportAutoActionRules: builder.query<ImportAutoActionRule[], void>({
       async queryFn() {
         return { data: await api.listImportAutoActionRules() };
@@ -106,6 +122,8 @@ export const {
   useDeleteTransactionMutation,
   useListCategoriesQuery,
   useUpsertCategoryMutation,
+  useListTagsQuery,
+  useUpsertTagMutation,
   useListImportAutoActionRulesQuery,
   useUpsertImportAutoActionRuleMutation,
   useDeleteImportAutoActionRuleMutation,

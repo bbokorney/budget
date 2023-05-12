@@ -3,7 +3,9 @@ import {
   QueryDocumentSnapshot, Firestore, query, orderBy,
   setDoc, doc, deleteDoc, limit, where, QueryConstraint, getDoc,
 } from "firebase/firestore";
-import { Transaction, Category, ImportAutoActionRule } from "./models";
+import {
+  Transaction, Category, Tag, ImportAutoActionRule,
+} from "./models";
 import getDB from "./firebase";
 
 export default class BudgetFirebaseAPI {
@@ -12,6 +14,9 @@ export default class BudgetFirebaseAPI {
 
   categoriesCollectionName = process.env.REACT_APP_CATEGORIES_COLLECTION_NAME
      ?? "budget-categories";
+
+  tagsCollectionName = process.env.REACT_APP_TAGS_COLLECTION_NAME
+     ?? "budget-tags";
 
   importAutoActionRuleCollectionName = process.env.REACT_APP_IMPORT_RULES_COLLECTION_NAME
      ?? "budget-importAutoActionRules";
@@ -30,6 +35,13 @@ export default class BudgetFirebaseAPI {
       throw new Error("Category has no ID");
     }
     return doc(this.db, this.categoriesCollectionName, c.id);
+  };
+
+  tagDocReference = (t: Tag) => {
+    if (!t.id) {
+      throw new Error("Tag has no ID");
+    }
+    return doc(this.db, this.tagsCollectionName, t.id);
   };
 
   importAutoActionRuleDocReference = (r: ImportAutoActionRule) => {
@@ -105,6 +117,26 @@ export default class BudgetFirebaseAPI {
     return {
       id: docRef.id,
       ...c,
+    };
+  };
+
+  listTags = async (): Promise<Tag[]> => {
+    const collectionRef = collection(this.db, this.tagsCollectionName);
+    const q = query(collectionRef);
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs
+      .map((snapshot: QueryDocumentSnapshot) => ({ id: snapshot.id, ...snapshot.data() }));
+  };
+
+  upsertTag = async (t: Tag): Promise<Tag> => {
+    if (t.id) {
+      await setDoc(this.tagDocReference(t), t);
+      return t;
+    }
+    const docRef = await addDoc(collection(this.db, this.tagsCollectionName), t);
+    return {
+      id: docRef.id,
+      ...t,
     };
   };
 

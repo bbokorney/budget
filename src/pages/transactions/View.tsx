@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import {
-  Button, Stack, Typography, CircularProgress, Divider, Backdrop,
+  Button, Stack, Typography, CircularProgress, Divider, Backdrop, Chip,
   Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
 } from "@mui/material";
 import { Delete, Edit, Check } from "@mui/icons-material";
@@ -96,6 +96,10 @@ const ViewTransaction = () => {
             </Stack>
             <Typography>Category: {transaction?.category}</Typography>
             <Typography>Vendor: {transaction?.vendor}</Typography>
+            <Typography>Tags</Typography>
+            <Stack direction="row" spacing={1}>
+              {transaction?.tags?.map((t) => <Chip key={t} label={t} />)}
+            </Stack>
             <Typography
               sx={{ whiteSpace: "pre-wrap" }}
               component="pre"

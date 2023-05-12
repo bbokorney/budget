@@ -12,6 +12,7 @@ import TransactionsStats from "../transactions/Stats";
 import FloatingAddTransactionButton from "../../ui/layout/FloatingAddTransactionButton";
 import FullScreenDialogTransactionForm from "../transactions/FullscreenDialogForm";
 import Categories from "../settings/Categories";
+import Tags from "../settings/Tags";
 import Import from "../settings/Import";
 
 const Main = () => (
@@ -29,6 +30,7 @@ const Main = () => (
         <Route path="/settings">
           <Route path="" element={<Settings />} />
           <Route path="categories" element={<Categories />} />
+          <Route path="tags" element={<Tags />} />
           <Route path="import" element={<Import />} />
         </Route>
         <Route path="/account" element={<Account />} />

@@ -33,6 +33,20 @@ const Settings = () => {
         </ListItem>
 
         <ListItem
+          key="tags"
+          disablePadding
+          secondaryAction={(
+            <IconButton edge="end">
+              <ArrowForward />
+            </IconButton>
+            )}
+        >
+          <ListItemButton onClick={() => navigate("/settings/tags")}>
+            <ListItemText primary="Tags" />
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem
           key="import"
           disablePadding
           secondaryAction={(

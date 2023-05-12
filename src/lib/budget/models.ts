@@ -15,6 +15,11 @@ export interface Category {
   name?: string;
 }
 
+export interface Tag {
+  id?: string;
+  name?: string;
+}
+
 export type SkipAction = {
   action: "skip";
 };

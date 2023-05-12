@@ -8,7 +8,7 @@ import { Check } from "@mui/icons-material";
 import { useListCategoriesQuery, useUpsertImportAutoActionRuleMutation } from "../../../lib/budget/budgetAPI";
 import { ImportAutoActionRule } from "../../../lib/budget/models";
 import FormSelect from "../../form/FormSelect";
-import { selectOptionsFromCategories, optionFromCategoryName } from "../../form/categoriesSelect";
+import { selectOptionsFromCategories, optionFromCategoryName } from "../../form/selectUtils";
 import {
   selectImportRuleForm, updateImportRuleFormState,
 } from "../../../lib/import/importRuleSlice";
@@ -129,10 +129,12 @@ const ImportRuleDialog: React.FC<ImportRuleDialogProps> = ({ open, onClose, onRu
               options={categoryOptions ?? []}
               initialValue={optionFromCategoryName(rule.action?.categoryName, categoryOptions)}
               onChange={(option) => {
-                updateRule({
-                  ...rule,
-                  action: { action: "assignCategory", categoryName: option?.value ?? "" },
-                });
+                if (!(option instanceof Array)) {
+                  updateRule({
+                    ...rule,
+                    action: { action: "assignCategory", categoryName: option?.value ?? "" },
+                  });
+                }
               }}
             />
           </FormControl>

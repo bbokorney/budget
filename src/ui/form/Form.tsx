@@ -7,13 +7,17 @@ import { useAppSelector, useAppDispatch } from "../../lib/store/hooks";
 import {
   selectTransactionForm, updateTransactionFormState,
 } from "../../lib/form/transactionFormSlice";
-import { useListCategoriesQuery, useUpsertTransactionMutation } from "../../lib/budget/budgetAPI";
+import {
+  useListCategoriesQuery, useUpsertTransactionMutation, useListTagsQuery,
+} from "../../lib/budget/budgetAPI";
 import { Transaction } from "../../lib/budget/models";
 import FormSelect from "./FormSelect";
 import FormTextField from "./FormTextInput";
 import CurrencyTextInput from "./CurrencyTextInput";
 import FormDatePicker from "./FormDatePicker";
-import { selectOptionsFromCategories, optionFromCategoryName } from "./categoriesSelect";
+import {
+  selectOptionsFromCategories, optionFromCategoryName, optionsFromTagNames, selectOptionsFromTags,
+} from "./selectUtils";
 
 type TransactionFormProps = {
   upsertCacheKey?: string;
@@ -36,6 +40,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
   const { data: categories, isLoading: isCategoriesLoading } = useListCategoriesQuery();
   const categoryOptions = selectOptionsFromCategories(categories);
+
+  const { data: tags, isLoading: isTagsLoading } = useListTagsQuery();
+  const tagOptions = selectOptionsFromTags(tags);
 
   const [
     // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
@@ -118,7 +125,25 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             initialValue={optionFromCategoryName(transaction.category, categoryOptions)}
             options={categoryOptions ?? []}
             onChange={(option) => {
-              updateTransaction({ ...transaction, category: option?.value ?? "" });
+              if (!(option instanceof Array)) {
+                updateTransaction({ ...transaction, category: option?.value ?? "" });
+              }
+            }}
+          />
+        </FormControl>
+        )}
+        {!isTagsLoading
+        && (
+        <FormControl sx={formControlSx}>
+          <FormSelect
+            label="Tags"
+            multiple
+            initialValue={optionsFromTagNames(transaction.tags, tagOptions)}
+            options={tagOptions ?? []}
+            onChange={(options) => {
+              if (options instanceof Array) {
+                updateTransaction({ ...transaction, tags: options?.map((o) => o.value) ?? [] });
+              }
             }}
           />
         </FormControl>
