@@ -14,6 +14,8 @@ import FullScreenDialogTransactionForm from "../transactions/FullscreenDialogFor
 import Categories from "../settings/Categories";
 import Tags from "../settings/Tags";
 import Import from "../settings/Import";
+import SpendingGoals from "../goals/SpendingGoals";
+import AddGoal from "../goals/Add";
 
 const Main = () => (
   <BrowserRouter>
@@ -21,6 +23,10 @@ const Main = () => (
     <Container sx={{ paddingBottom: "72px" }}>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/goals">
+          <Route path="" element={<SpendingGoals />} />
+          <Route path="add" element={<AddGoal />} />
+        </Route>
         <Route path="/transactions">
           <Route path="list" element={<TransactionsList />} />
           <Route path="stats" element={<TransactionsStats />} />

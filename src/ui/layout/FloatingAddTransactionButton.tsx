@@ -8,6 +8,9 @@ const FloatingAddTransactionButton = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
 
+  const ignorePaths = ["/settings", "/goals"];
+  const hideButton = (path: string) => ignorePaths.some((p) => path.startsWith(p));
+
   const handleClick = () => {
     dispatch(updateFormDialogState({ open: true, actionType: "Add" }));
   };
@@ -18,7 +21,7 @@ const FloatingAddTransactionButton = () => {
       aria-label="add"
       onClick={handleClick}
       sx={{
-        display: location.pathname.startsWith("/settings") ? "none" : "",
+        display: hideButton(location.pathname) ? "none" : "",
         position: "fixed",
         bottom: "86px",
         right: "15px",

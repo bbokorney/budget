@@ -8,6 +8,7 @@ import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import HomeIcon from "@mui/icons-material/Home";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import Paper from "@mui/material/Paper";
 
 const BottomNavBar = () => {
@@ -35,6 +36,13 @@ const BottomNavBar = () => {
           icon={<HomeIcon />}
           component={RouterLink}
           to="/"
+        />
+        <BottomNavigationAction
+          label="Spending Goals"
+          value="/goals"
+          icon={<TrackChangesIcon />}
+          component={RouterLink}
+          to="/goals"
         />
         <BottomNavigationAction
           label="Transactions"

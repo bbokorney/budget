@@ -24,6 +24,13 @@ export function selectOptionsFromTags(
   );
 }
 
+export function optionsFromTagName(tag?: string, tagOptions?: FormSelectOption[]) {
+  if (!tag) {
+    return null;
+  }
+  return tagOptions?.find((option) => tag === option?.value);
+}
+
 export function optionsFromTagNames(
   names?: string[],
   tagOptions?: FormSelectOption[],

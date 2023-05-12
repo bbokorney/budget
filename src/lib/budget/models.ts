@@ -20,6 +20,13 @@ export interface Tag {
   name?: string;
 }
 
+export interface Goal {
+  id?: string;
+  category?: string;
+  tag?: string;
+  amount?: number;
+}
+
 export type SkipAction = {
   action: "skip";
 };
